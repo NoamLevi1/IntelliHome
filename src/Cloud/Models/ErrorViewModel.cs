@@ -1,9 +1,8 @@
-namespace IntelliHome.Cloud
-{
-    public sealed class ErrorViewModel
-    {
-        public string? RequestId { get; init; }
+namespace IntelliHome.Cloud;
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-    }
+public sealed class ErrorViewModel
+{
+    public string? RequestId { get; init; }
+
+    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 }
