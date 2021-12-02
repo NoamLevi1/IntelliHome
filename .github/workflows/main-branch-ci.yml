@@ -25,8 +25,8 @@ jobs:
         id: docker_build_cloud
         uses: docker/build-push-action@v2
         with:
-          context: ./
-          file: ./Cloud/Dockerfile
+          context: ./src
+          file: ./src/Cloud/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/cloud:latest
 
@@ -37,8 +37,8 @@ jobs:
         id: docker_build_homeappliance_communicationmanager
         uses: docker/build-push-action@v2
         with:
-          context: ./
-          file: ./HomeAppliance.CommunicationManager/Dockerfile
+          context: ./src
+          file: ./src/HomeAppliance.CommunicationManager/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/homeappliance-communicationmanager:latest
 
