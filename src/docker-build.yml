@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  cloud:
+    build:
+      context: .
+      dockerfile: ./Cloud/Dockerfile
+    image: intellihome/cloud
+  homeappliance-communicationmanager:
+    build:
+      context: .
+      dockerfile: ./HomeAppliance.CommunicationManager/Dockerfile
+    image: intellihome/homeappliance-communicationmanager
