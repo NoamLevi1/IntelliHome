@@ -1,0 +1,46 @@
+name: main branch CI
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push cloud
+        id: docker_build_cloud
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Cloud/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/cloud:latest
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build_cloud.outputs.digest }}
+      
+      - name: Build and push homeappliance-communicationmanager
+        id: docker_build_homeappliance_communicationmanager
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./HomeAppliance.CommunicationManager/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/homeappliance-communicationmanager:latest
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build_homeappliance_communicationmanager.outputs.digest }}
