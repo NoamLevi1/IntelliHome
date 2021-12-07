@@ -14,9 +14,8 @@ public static class Ensure
             ? argument
             : throw new ArgumentException("value cannot be null or whitespace", argumentName);
 
-    public static TEnumerable NotNullOrEmpty<TEnumerable, T>(TEnumerable? enumerable, [CallerArgumentExpression("enumerable")] string? argumentName = null)
-        where TEnumerable : IEnumerable<T> =>
+    public static IEnumerable<T> NotNullOrEmpty<T>(IEnumerable<T>? enumerable, [CallerArgumentExpression("enumerable")] string? argumentName = null) =>
         enumerable?.Any() ?? false
             ? enumerable
-            : throw new ArgumentException("value cannot be null or empty");
+            : throw new ArgumentException("value cannot be null or empty", argumentName);
 }
