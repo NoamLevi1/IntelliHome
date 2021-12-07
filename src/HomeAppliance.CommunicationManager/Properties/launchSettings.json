@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "HomeAppliance.CommunicationManager": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
