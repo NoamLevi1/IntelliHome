@@ -9,19 +9,27 @@ namespace IntelliHome.Cli;
 public abstract class CommandBase
 {
     protected ILogger Logger { get; }
-    protected CommandLineApplication CommandLineApplication { get; private set; } = null!;
+    protected CommandLineApplication CommandLineApplication { get; }
 
-    protected CommandBase(ILoggerFactory loggerFactory) =>
+    protected virtual bool IsRequireAdminPrivileges => false;
+
+    protected CommandBase(ILoggerFactory loggerFactory, CommandLineApplication commandLineApplication)
+    {
         Logger = loggerFactory.CreateLogger(GetType());
+        CommandLineApplication = commandLineApplication;
+    }
 
     protected abstract Task RunAsync(CancellationToken cancellationToken);
 
-    public async Task<int> OnExecuteAsync(CommandLineApplication commandLineApplication, CancellationToken cancellationToken)
+    public async Task<int> OnExecuteAsync(CancellationToken cancellationToken)
     {
-        CommandLineApplication = commandLineApplication;
-
         try
         {
+            if (IsRequireAdminPrivileges && !ProcessAuthorizationHelper.IsRunningWithAdminPrivileges())
+            {
+                throw new Exception("Command must run with admin privileges");
+            }
+
             await RunAsync(cancellationToken);
             return 0;
         }

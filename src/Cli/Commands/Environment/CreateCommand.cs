@@ -1,5 +1,4 @@
-﻿using IntelliHome.Cli.Utilities;
-using IntelliHome.Common;
+﻿using IntelliHome.Common;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
@@ -15,8 +14,11 @@ public class CreateCommand : CommandBase
     [Option("--verbose")]
     public bool Verbose { get; set; }
 
-    public CreateCommand(ILoggerFactory loggerFactory, DockerHelper dockerHelper)
-        : base(loggerFactory) =>
+    public CreateCommand(
+        ILoggerFactory loggerFactory,
+        CommandLineApplication commandLineApplication,
+        DockerHelper dockerHelper)
+        : base(loggerFactory, commandLineApplication) =>
         _dockerHelper = dockerHelper;
 
     protected override async Task RunAsync(CancellationToken cancellationToken)

@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Logging;
 
 namespace IntelliHome.Cli;
 
 public class CommandGroup : CommandBase
 {
-    public CommandGroup(ILoggerFactory loggerFactory)
-        : base(loggerFactory)
+    public CommandGroup(ILoggerFactory loggerFactory, CommandLineApplication commandLineApplication)
+        : base(loggerFactory, commandLineApplication)
     {
     }
 

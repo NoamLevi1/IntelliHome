@@ -4,7 +4,7 @@ using IntelliHome.Common;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace IntelliHome.Cli.Utilities;
+namespace IntelliHome.Cli;
 
 public sealed class DockerHelper
 {
@@ -53,7 +53,7 @@ public sealed class DockerHelper
                     Dockerfile = "./HomeAppliance.CommunicationManager/Dockerfile",
                     Tags = new[]
                     {
-                        _communicationManagerContainerInformation.Name
+                        _communicationManagerContainerInformation.ImageName
                     }
                 },
                 fileStream,

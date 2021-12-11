@@ -14,7 +14,7 @@ public sealed class TaskExtensionTests
             new[]
             {
                 Task.CompletedTask,
-                Task.Delay(5),
+                Task.Delay(50),
             };
 
         await tasks.WhenAllAsync();

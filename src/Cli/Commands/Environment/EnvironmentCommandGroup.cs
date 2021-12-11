@@ -10,8 +10,8 @@ namespace IntelliHome.Cli;
     typeof(ClearCommand))]
 public class EnvironmentCommandGroup : CommandGroup
 {
-    public EnvironmentCommandGroup(ILoggerFactory loggerFactory)
-        : base(loggerFactory)
+    public EnvironmentCommandGroup(ILoggerFactory loggerFactory, CommandLineApplication commandLineApplication)
+        : base(loggerFactory, commandLineApplication)
     {
     }
 }

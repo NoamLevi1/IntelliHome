@@ -7,8 +7,8 @@ namespace IntelliHome.Cli;
 [Subcommand(typeof(EnvironmentCommandGroup))]
 public sealed class MainCommandGroup : CommandGroup
 {
-    public MainCommandGroup(ILoggerFactory loggerFactory)
-        : base(loggerFactory)
+    public MainCommandGroup(ILoggerFactory loggerFactory, CommandLineApplication commandLineApplication)
+        : base(loggerFactory, commandLineApplication)
     {
     }
 }

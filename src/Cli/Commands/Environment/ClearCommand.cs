@@ -1,5 +1,4 @@
-﻿using IntelliHome.Cli.Utilities;
-using IntelliHome.Common;
+﻿using IntelliHome.Common;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
@@ -10,8 +9,11 @@ public class ClearCommand : CommandBase
 {
     private readonly DockerHelper _dockerHelper;
 
-    public ClearCommand(ILoggerFactory loggerFactory, DockerHelper dockerHelper)
-        : base(loggerFactory) =>
+    public ClearCommand(
+        ILoggerFactory loggerFactory,
+        CommandLineApplication commandLineApplication,
+        DockerHelper dockerHelper)
+        : base(loggerFactory, commandLineApplication) =>
         _dockerHelper = dockerHelper;
 
     protected override async Task RunAsync(CancellationToken cancellationToken) =>

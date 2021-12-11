@@ -1,7 +1,6 @@
 ﻿using ICSharpCode.SharpZipLib.Tar;
-using ICSharpCode.SharpZipLib.Zip;
 
-namespace IntelliHome.Cli.Utilities;
+namespace IntelliHome.Cli;
 
 public static class TarHelper
 {

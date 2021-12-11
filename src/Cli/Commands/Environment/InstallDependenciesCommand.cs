@@ -15,8 +15,13 @@ public class InstallDependenciesCommand : CommandBase
     [Option("--download-location=<path>")]
     public string? DownloadLocation { get; set; }
 
-    public InstallDependenciesCommand(HttpClient httpClient, ILoggerFactory loggerFactory)
-        : base(loggerFactory) =>
+    protected override bool IsRequireAdminPrivileges => true;
+
+    public InstallDependenciesCommand(
+        ILoggerFactory loggerFactory,
+        CommandLineApplication commandLineApplication,
+        HttpClient httpClient)
+        : base(loggerFactory, commandLineApplication) =>
         _httpClient = httpClient;
 
     protected override async Task RunAsync(CancellationToken cancellationToken)
@@ -82,7 +87,7 @@ public class InstallDependenciesCommand : CommandBase
         {
             Logger.LogInformation($"{nameof(InstallWsl2Async)} started");
 
-            var exitCode = await RunCommandAsync("dism.exe","/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart", cancellationToken);
+            var exitCode = await RunCommandAsync("dism.exe", "/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart", cancellationToken);
 
             if (exitCode == 3010)
             {

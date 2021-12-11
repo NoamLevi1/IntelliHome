@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace IntelliHome.Common.Tests.Utilities;
+namespace IntelliHome.Common.Tests;
 
 [TestClass]
 public sealed class EnsureTests
@@ -10,7 +10,7 @@ public sealed class EnsureTests
     [TestMethod]
     [DataRow(null, true)]
     [DataRow("Not Null", false)]
-    public void TestEnsureNotNullDetectsNull(object obj, bool isNull)
+    public void TestEnsureNotNullDetectsNull(object? obj, bool isNull)
     {
         if (isNull)
         {
@@ -39,7 +39,7 @@ public sealed class EnsureTests
     [DataRow(" \t", true)]
     [DataRow("\t ", true)]
     [DataRow("\t\t", true)]
-    public void TestEnsureNotNullOrWhiteSpaceDetectsNullOrWhiteSpace(string str, bool isNullOrWhiteSpace)
+    public void TestEnsureNotNullOrWhiteSpaceDetectsNullOrWhiteSpace(string? str, bool isNullOrWhiteSpace)
     {
         if (isNullOrWhiteSpace)
         {
@@ -62,7 +62,7 @@ public sealed class EnsureTests
     [DataRow(new object[] {1, 2, 3}, false)]
     [DataRow(null, true)]
     [DataRow(new object[] { }, true)]
-    public void TestEnsureNotNullOrEmptyDetectsNullOrEmpty(object[] arr, bool isNullOrEmpty)
+    public void TestEnsureNotNullOrEmptyDetectsNullOrEmpty(object[]? arr, bool isNullOrEmpty)
     {
         if (isNullOrEmpty)
         {
