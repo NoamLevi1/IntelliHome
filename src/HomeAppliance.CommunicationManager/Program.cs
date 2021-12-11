@@ -1,10 +1,16 @@
-﻿namespace IntelliHome.HomeAppliance.CommunicationManager
+﻿namespace IntelliHome.HomeAppliance.CommunicationManager;
+
+public static class Program
 {
-    public static class Program
+    public static void Main(string[] args)
     {
-        public static void Main()
-        {
-            Console.WriteLine("Hello, World!");
-        }
+        CreateHost(args).Run();
     }
+
+    private static IHost CreateHost(string[] args) =>
+        Host.
+            CreateDefaultBuilder(args).
+            ConfigureServices(
+                services => services.AddHostedService<Worker>()).
+            Build();
 }
