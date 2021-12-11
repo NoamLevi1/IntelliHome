@@ -450,7 +450,7 @@ Ensure.NotNull($NAME$, $EXPR$);</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=115446EE4120D1489950E2B5E118F63E/Reformat/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=115446EE4120D1489950E2B5E118F63E/Shortcut/@EntryValue">esn</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=115446EE4120D1489950E2B5E118F63E/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=115446EE4120D1489950E2B5E118F63E/Text/@EntryValue">Ensure.NotNull(nameof($parameter$), $parameter$);&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=115446EE4120D1489950E2B5E118F63E/Text/@EntryValue">Ensure.NotNull($parameter$);&#xD;
 $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=115446EE4120D1489950E2B5E118F63E/Field/=parameter/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=115446EE4120D1489950E2B5E118F63E/Field/=parameter/Expression/@EntryValue">parameterOfType("System.Object")</s:String>
@@ -464,7 +464,7 @@ $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=3AFA0D781BA3314DAB87614CE434F859/Reformat/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=3AFA0D781BA3314DAB87614CE434F859/Shortcut/@EntryValue">ess</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=3AFA0D781BA3314DAB87614CE434F859/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=3AFA0D781BA3314DAB87614CE434F859/Text/@EntryValue">Ensure.NotNullOrWhiteSpace(nameof($parameter$), $parameter$);&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=3AFA0D781BA3314DAB87614CE434F859/Text/@EntryValue">Ensure.NotNullOrWhiteSpace($parameter$);&#xD;
 $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=3AFA0D781BA3314DAB87614CE434F859/Field/=parameter/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=3AFA0D781BA3314DAB87614CE434F859/Field/=parameter/Expression/@EntryValue">variableOfType("System.String")</s:String>
@@ -478,7 +478,7 @@ $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=73C5A6EFB7C2A24CADE936748E07CFCD/Reformat/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=73C5A6EFB7C2A24CADE936748E07CFCD/Shortcut/@EntryValue">es</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=73C5A6EFB7C2A24CADE936748E07CFCD/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=73C5A6EFB7C2A24CADE936748E07CFCD/Text/@EntryValue">Ensure.That(nameof($parameter$), $parameter$$END$);</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=73C5A6EFB7C2A24CADE936748E07CFCD/Text/@EntryValue">Ensure.That($parameter$$END$);</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=73C5A6EFB7C2A24CADE936748E07CFCD/Field/=parameter/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=73C5A6EFB7C2A24CADE936748E07CFCD/Field/=parameter/Expression/@EntryValue">parameterOfType("System.Object")</s:String>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=73C5A6EFB7C2A24CADE936748E07CFCD/Field/=parameter/Order/@EntryValue">0</s:Int64>
@@ -491,7 +491,7 @@ $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=804C2F7B87B01642BD5D209FBC767625/Reformat/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=804C2F7B87B01642BD5D209FBC767625/Shortcut/@EntryValue">ese</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=804C2F7B87B01642BD5D209FBC767625/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=804C2F7B87B01642BD5D209FBC767625/Text/@EntryValue">Ensure.NotNullOrEmpty(nameof($parameter$), $parameter$);&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=804C2F7B87B01642BD5D209FBC767625/Text/@EntryValue">Ensure.NotNullOrEmpty($parameter$);&#xD;
 $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=804C2F7B87B01642BD5D209FBC767625/Field/=parameter/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=804C2F7B87B01642BD5D209FBC767625/Field/=parameter/Expression/@EntryValue">parameterOfType("System.Collections.IEnumerable")</s:String>
@@ -588,6 +588,7 @@ $END$</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=cmdlet/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=cmdlets/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=cname/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=communicationmanager/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=comparer/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=concat/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=correlator/@EntryIndexedValue">True</s:Boolean>
@@ -618,10 +619,13 @@ $END$</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=geolocation/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=gmsa/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=guid/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=homeappliance/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=homeassistant/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=honeytoken/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=informations/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=ingestors/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Intelli/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=intellihome/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Interdomain/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=interflow/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=ispm/@EntryIndexedValue">True</s:Boolean>
@@ -646,6 +650,7 @@ $END$</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=migrators/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=mimikatz/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=mitre/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=mongo/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=msal/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=msdi/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=msvm/@EntryIndexedValue">True</s:Boolean>
