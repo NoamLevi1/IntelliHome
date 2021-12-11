@@ -16,10 +16,16 @@ public class ClearCommand : CommandBase
         : base(loggerFactory, commandLineApplication) =>
         _dockerHelper = dockerHelper;
 
-    protected override async Task RunAsync(CancellationToken cancellationToken) =>
+    protected override async Task RunAsync(CancellationToken cancellationToken)
+    {
+        Logger.LogInformation($"{nameof(RunAsync)} started");
+
         await new[]
         {
             _dockerHelper.RemoveCommunicationManagerContainerAsync(cancellationToken),
             _dockerHelper.RemoveHomeAssistantContainerAsync(cancellationToken)
         }.WhenAllAsync();
+
+        Logger.LogInformation($"{nameof(RunAsync)} finished");
+    }
 }

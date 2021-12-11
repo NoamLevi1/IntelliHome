@@ -58,7 +58,7 @@ public class InstallDependenciesCommand : CommandBase
             installerPath,
             cancellationToken);
 
-        await RunCommandAsync("msiexec.exe", $"/qb /i {installerPath}", cancellationToken);
+        await RunExecutableAsync("msiexec.exe", $"/qb /i {installerPath}", cancellationToken);
 
         Logger.LogInformation($"{nameof(InstallMongoDbAsync)} finished");
     }
@@ -74,12 +74,13 @@ public class InstallDependenciesCommand : CommandBase
 
         if (!await InstallWsl2Async())
         {
+            Logger.LogError($"{nameof(InstallDockerAsync)} Failed, need to restart");
             return;
         }
 
         var installerPath = Path.Combine(downloadLocation, "DockerInstaller.exe");
         await DownloadFileAsync(_dockerForDesktopUri, installerPath, cancellationToken);
-        await RunCommandAsync(installerPath, "install --quiet", cancellationToken);
+        await RunExecutableAsync(installerPath, "install --quiet", cancellationToken);
 
         Logger.LogInformation($"{nameof(InstallDockerAsync)} finished");
 
@@ -87,21 +88,21 @@ public class InstallDependenciesCommand : CommandBase
         {
             Logger.LogInformation($"{nameof(InstallWsl2Async)} started");
 
-            var exitCode = await RunCommandAsync("dism.exe", "/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart", cancellationToken);
+            var exitCode = await RunExecutableAsync("dism.exe", "/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart", cancellationToken);
 
             if (exitCode == 3010)
             {
                 var shouldRestart = Prompt.GetYesNo("Restart required to finish installing wsl2, would you like to continue?", true);
                 if (shouldRestart)
                 {
-                    await RunCommandAsync("shutdown", "/r /f /t 00", cancellationToken);
+                    await RunExecutableAsync("shutdown", "/r /f /t 00", cancellationToken);
                 }
 
                 return false;
             }
 
-            await RunCommandAsync("wsl", "--update", cancellationToken);
-            await RunCommandAsync("wsl", "--set-default-version 2", cancellationToken);
+            await RunExecutableAsync("wsl", "--update", cancellationToken);
+            await RunExecutableAsync("wsl", "--set-default-version 2", cancellationToken);
 
             Logger.LogInformation($"{nameof(InstallWsl2Async)} finished");
 
@@ -136,9 +137,9 @@ public class InstallDependenciesCommand : CommandBase
         Logger.LogInformation($"{nameof(DownloadFileAsync)} finished [{nameof(downloadUri)}={downloadUri} {nameof(filePath)}={filePath}]");
     }
 
-    private async Task<int> RunCommandAsync(string processPath, string arguments, CancellationToken cancellationToken)
+    private async Task<int> RunExecutableAsync(string path, string arguments, CancellationToken cancellationToken)
     {
-        var process = Process.Start(processPath, arguments);
+        var process = Process.Start(path, arguments);
         await using (cancellationToken.Register(() => process.Kill(true)))
         {
             await process.WaitForExitAsync(cancellationToken);
