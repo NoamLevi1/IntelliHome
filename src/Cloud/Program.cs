@@ -12,6 +12,10 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllersWithViews();
+        builder.
+            Services.
+            AddReverseProxy().
+            LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
         var webApplication = builder.Build();
 
@@ -28,9 +32,7 @@ public static class Program
             UseRouting().
             UseAuthorization();
 
-        webApplication.MapControllerRoute(
-            "default",
-            "{controller=Home}/{action=Index}/{id?}");
+        webApplication.MapReverseProxy();
 
         return webApplication;
     }
