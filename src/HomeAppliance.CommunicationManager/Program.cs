@@ -11,6 +11,9 @@ public static class Program
         Host.
             CreateDefaultBuilder(args).
             ConfigureServices(
-                services => services.AddHostedService<Worker>()).
+                services =>
+                    services.
+                        AddSingleton<IHttpMessageHandler, HttpMessageHandler>().
+                        AddHostedService<Worker>()).
             Build();
 }
