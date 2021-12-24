@@ -113,7 +113,7 @@ public sealed class DockerHelper
                 new Mount
                 {
                     Type = "bind",
-                    Source = mountSource.ToLower(),
+                    Source = mountSource,
                     Target = "/config"
                 }
             });

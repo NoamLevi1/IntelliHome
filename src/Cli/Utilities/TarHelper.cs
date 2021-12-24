@@ -14,7 +14,7 @@ public static class TarHelper
         foreach (var fileSystemEntry in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
         {
             var entry = TarEntry.CreateEntryFromFile(fileSystemEntry);
-            entry.Name = entry.Name.Replace(directory.Replace("\\", "/"), string.Empty).TrimStart('/');
+            entry.Name = entry.Name.Replace(directory.TrimStart('/').Replace("\\", "/"), string.Empty).TrimStart('/');
             archive.WriteEntry(entry, false);
         }
         archive.Close();
