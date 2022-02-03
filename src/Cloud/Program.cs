@@ -1,5 +1,6 @@
 namespace IntelliHome.Cloud;
 
+
 public static class Program
 {
     public static void Main(string[] args)
@@ -10,7 +11,7 @@ public static class Program
     private static WebApplication CreateWebApplication(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        builder.Services.AddSignalR();
         builder.Services.AddControllersWithViews();
         builder.
             Services.
@@ -33,6 +34,12 @@ public static class Program
             UseAuthorization();
 
         webApplication.MapReverseProxy();
+        webApplication.UseRouting();
+        webApplication.UseEndpoints(
+            endpoints =>
+            {
+                endpoints.MapHub<ConnectionHub>("/Connectionhub");
+            });
 
         return webApplication;
     }
