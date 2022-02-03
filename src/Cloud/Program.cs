@@ -38,7 +38,7 @@ public static class Program
         webApplication.UseEndpoints(
             endpoints =>
             {
-                endpoints.MapHub<ConnectionHub>("/Connectionhub");
+                endpoints.MapHub<SignalRHub>("/Connectionhub");
             });
 
         return webApplication;

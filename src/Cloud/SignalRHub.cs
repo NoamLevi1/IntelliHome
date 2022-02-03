@@ -3,20 +3,20 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace IntelliHome.Cloud ;
 
-    public sealed class ConnectionHub : Hub
+    public sealed class SignalRHub : Hub
     {
-        private readonly ILogger<ConnectionHub> _logger;
+        private readonly ILogger<SignalRHub> _logger;
 
-        public ConnectionHub(ILogger<ConnectionHub> logger)
+        public SignalRHub(ILogger<SignalRHub> logger)
         {
             _logger = logger;
         }
 
-        public async  Task sendMessageAsync(HttpRequestMessage httpRequestMessage)
+        public async  Task sendMessageAsync(HttpRequestMessage httpRequestMessage, CancellationToken stoppingToken)
         {
            _logger.LogInformation($"{nameof(sendMessageAsync)} started");
         Ensure.NotNull(httpRequestMessage);
-            await  Clients.Caller.SendAsync("RevieveHttpMessage", httpRequestMessage);
+            await  Clients.Caller.SendAsync("RecieveHttpMessage", httpRequestMessage, stoppingToken);
             _logger.LogInformation($"{nameof(sendMessageAsync)} started");
         }
     }
