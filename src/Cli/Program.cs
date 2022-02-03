@@ -18,7 +18,8 @@ public static class Program
                         services.
                             AddSingleton<HttpClient>().
                             AddSingleton<DockerHelper>();
-                        serviceProvider = services.BuildServiceProvider();
+
+                            serviceProvider = services.BuildServiceProvider();
                     }).
                 RunCommandLineApplicationAsync<MainCommandGroup>(args);
 
