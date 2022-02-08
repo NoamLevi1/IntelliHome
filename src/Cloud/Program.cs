@@ -10,7 +10,8 @@ public static class Program
     private static WebApplication CreateWebApplication(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        builder.Services.AddSingleton<IHomeApplianceHttpMessageSender, HomeApplianceHttpMessageSender>();
+        builder.Services.AddSignalR();
         builder.Services.AddControllersWithViews();
         builder.
             Services.
@@ -33,6 +34,9 @@ public static class Program
             UseAuthorization();
 
         webApplication.MapReverseProxy();
+        webApplication.
+            UseEndpoints(
+            endpoints => endpoints.MapHub<HomeApplianceHttpMessageSender>("/Connectionhub"));
 
         return webApplication;
     }
