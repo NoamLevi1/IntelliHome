@@ -6,7 +6,24 @@ using Newtonsoft.Json;
 
 namespace IntelliHome.Cli;
 
-public sealed class DockerHelper
+public interface IDockerHelper
+{
+    Task CreateCommunicationManagerContainerAsync(
+        bool verbose,
+        bool overwrite,
+        CancellationToken cancellationToken);
+
+    Task RemoveCommunicationManagerContainerAsync(CancellationToken cancellationToken);
+
+    Task CreateHomeAssistantContainerAsync(
+        bool verbose,
+        bool overwrite,
+        CancellationToken cancellationToken);
+
+    Task RemoveHomeAssistantContainerAsync(CancellationToken cancellationToken);
+}
+
+public sealed class DockerHelper : IDockerHelper
 {
     private static readonly string _solutionDirectory =
         Path.Combine(
@@ -88,13 +105,18 @@ public sealed class DockerHelper
     {
         await PullImageAsync();
 
-        var configPath = Path.Combine(Path.GetTempPath(), "HomeAssistantConfig");
-        if (!Directory.Exists(configPath))
+        var configurationDirectoryPath = Path.Combine(Path.GetTempPath(), "HomeAssistantConfig");
+        if (overwrite && Directory.Exists(configurationDirectoryPath))
         {
-            Directory.CreateDirectory(configPath);
+            Directory.Delete(configurationDirectoryPath, true);
         }
 
-        var mountSource = configPath.Replace("\\", "/").Replace(":", string.Empty);
+        if (!Directory.Exists(configurationDirectoryPath))
+        {
+            Directory.CreateDirectory(configurationDirectoryPath);
+        }
+
+        var mountSource = configurationDirectoryPath.Replace("\\", "/").Replace(":", string.Empty);
         if (!mountSource.StartsWith("/"))
         {
             mountSource = "/" + mountSource;
@@ -118,6 +140,24 @@ public sealed class DockerHelper
                 }
             });
 
+        var configurationPath = Path.Combine(configurationDirectoryPath, "configuration.yaml");
+        while (!File.Exists(configurationPath))
+        {
+            await Task.Delay(200, cancellationToken);
+        }
+
+        var isConfigurationChanged = await ConfigureHomeAssistantAsync();
+
+        if (isConfigurationChanged)
+        {
+            _logger.LogInformation($"{nameof(CreateHomeAssistantContainerAsync)} restarting home assistant started");
+            await _dockerClient.Containers.RestartContainerAsync(
+                _homeAssistantContainerInformation.Name,
+                new ContainerRestartParameters(),
+                cancellationToken);
+            _logger.LogInformation($"{nameof(CreateHomeAssistantContainerAsync)} restarting home assistant finished");
+        }
+
         async Task PullImageAsync()
         {
             _logger.LogInformation($"{nameof(CreateHomeAssistantContainerAsync)} {nameof(PullImageAsync)} started");
@@ -133,6 +173,37 @@ public sealed class DockerHelper
                     : new Progress<JSONMessage>(),
                 cancellationToken);
             _logger.LogInformation($"{nameof(CreateHomeAssistantContainerAsync)} {nameof(PullImageAsync)} finished");
+        }
+
+        async Task<bool> ConfigureHomeAssistantAsync()
+        {
+            _logger.LogInformation($"{nameof(CreateHomeAssistantContainerAsync)} {nameof(ConfigureHomeAssistantAsync)} file started");
+
+            var yamlSerializer = new YamlSerializer();
+            var initialConfigurationYaml = await File.ReadAllTextAsync(configurationPath, cancellationToken);
+            var configuration = yamlSerializer.Deserialize<Dictionary<string, object>>(initialConfigurationYaml);
+
+            configuration["http"] =
+                new Dictionary<string, object>
+                {
+                    ["use_x_forwarded_for"] = true,
+                    ["trusted_proxies"] = new[]
+                    {
+                        "0.0.0.0/0"
+                    }
+                };
+
+            var configuredConfigurationYaml = yamlSerializer.Serialize(configuration);
+            await File.WriteAllTextAsync(
+                configurationPath,
+                configuredConfigurationYaml,
+                cancellationToken);
+
+            var isChanged = initialConfigurationYaml != configuredConfigurationYaml;
+
+            _logger.LogInformation($"{nameof(CreateHomeAssistantContainerAsync)} {nameof(ConfigureHomeAssistantAsync)} finished [{nameof(isChanged)}={isChanged}]");
+
+            return isChanged;
         }
     }
 

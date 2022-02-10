@@ -7,7 +7,7 @@ namespace IntelliHome.Cli;
 [Command]
 public class CreateCommand : CommandBase
 {
-    private readonly DockerHelper _dockerHelper;
+    private readonly IDockerHelper _dockerHelper;
 
     [Option("--overwrite")]
     public bool Overwrite { get; set; }
@@ -17,7 +17,7 @@ public class CreateCommand : CommandBase
     public CreateCommand(
         ILoggerFactory loggerFactory,
         CommandLineApplication commandLineApplication,
-        DockerHelper dockerHelper)
+        IDockerHelper dockerHelper)
         : base(loggerFactory, commandLineApplication) =>
         _dockerHelper = dockerHelper;
 
