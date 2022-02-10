@@ -1,3 +1,5 @@
+using Yarp.ReverseProxy.Configuration;
+
 namespace IntelliHome.Cloud;
 
 public static class Program
@@ -13,10 +15,7 @@ public static class Program
         builder.Services.AddSingleton<IHomeApplianceHttpMessageSender, HomeApplianceHttpMessageSender>();
         builder.Services.AddSignalR();
         builder.Services.AddControllersWithViews();
-        builder.
-            Services.
-            AddReverseProxy().
-            LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+        builder.Services.AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>().AddReverseProxy();
 
         var webApplication = builder.Build();
 
