@@ -7,12 +7,12 @@ namespace IntelliHome.Cli;
 [Command]
 public class ClearCommand : CommandBase
 {
-    private readonly DockerHelper _dockerHelper;
+    private readonly IDockerHelper _dockerHelper;
 
     public ClearCommand(
         ILoggerFactory loggerFactory,
         CommandLineApplication commandLineApplication,
-        DockerHelper dockerHelper)
+        IDockerHelper dockerHelper)
         : base(loggerFactory, commandLineApplication) =>
         _dockerHelper = dockerHelper;
 

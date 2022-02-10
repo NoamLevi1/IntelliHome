@@ -17,7 +17,7 @@ public static class Program
                     {
                         services.
                             AddSingleton<HttpClient>().
-                            AddSingleton<DockerHelper>();
+                            AddSingleton<IDockerHelper, DockerHelper>();
                         serviceProvider = services.BuildServiceProvider();
                     }).
                 RunCommandLineApplicationAsync<MainCommandGroup>(args);
