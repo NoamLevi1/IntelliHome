@@ -13,7 +13,8 @@ public static class Program
             ConfigureServices(
                 services =>
                     services.
-                        AddSingleton<IHttpMessageHandler, HttpMessageHandler>().
-                        AddHostedService<Worker>()).
+                        AddSingleton<IHomeAssistantClient, HomeAssistantClient>().
+                        AddSingleton<IHomeApplianceHttpResponseMessageReceiverClient, HomeApplianceHttpResponseMessageReceiverClient>().
+                        AddHostedService<HomeApplianceHttpRequestMessageSenderHubClient>()).
             Build();
 }

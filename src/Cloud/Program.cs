@@ -1,3 +1,4 @@
+using IntelliHome.Common;
 using Yarp.ReverseProxy.Configuration;
 
 namespace IntelliHome.Cloud;
@@ -12,10 +13,15 @@ public static class Program
     private static WebApplication CreateWebApplication(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddSingleton<IHomeApplianceHttpMessageSender, HomeApplianceHttpMessageSender>();
-        builder.Services.AddSignalR();
-        builder.Services.AddControllersWithViews();
-        builder.Services.AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>().AddReverseProxy();
+        builder.Services.
+            AddSingleton<IClientStore,ClientStore>().
+            AddSingleton<IHomeApplianceHttpRequestMessageSenderHub, HomeApplianceHttpRequestMessageSenderHub>().
+            AddSingleton<IHomeApplianceTunneledHttpMessageHandler, HomeApplianceTunneledHttpMessageHandler>().
+            AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>();
+
+        builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options => options.PayloadSerializerSettings.ConfigureCommon());
+        builder.Services.AddControllersWithViews().AddNewtonsoftJson(options => options.SerializerSettings.ConfigureCommon());
+        builder.Services.AddReverseProxy();
 
         var webApplication = builder.Build();
 
@@ -33,9 +39,8 @@ public static class Program
             UseAuthorization();
 
         webApplication.MapReverseProxy();
-        webApplication.
-            UseEndpoints(
-            endpoints => endpoints.MapHub<HomeApplianceHttpMessageSender>("/Connectionhub"));
+        webApplication.MapControllers();
+        webApplication.MapHub<HomeApplianceHttpRequestMessageSenderHub>("/Api/HomeApplianceHttpRequestMessageSender");
 
         return webApplication;
     }

@@ -1,16 +1,16 @@
 ﻿namespace IntelliHome.HomeAppliance.CommunicationManager;
 
-public interface IHttpMessageHandler
+public interface IHomeAssistantClient
 {
     Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken);
 }
 
-public sealed class HttpMessageHandler : IHttpMessageHandler
+public sealed class HomeAssistantClient : IHomeAssistantClient
 {
-    private readonly ILogger<HttpMessageHandler> _logger;
+    private readonly ILogger<HomeAssistantClient> _logger;
     private readonly HttpClient _client;
 
-    public HttpMessageHandler(ILogger<HttpMessageHandler> logger)
+    public HomeAssistantClient(ILogger<HomeAssistantClient> logger)
     {
         _logger = logger;
         _client = new HttpClient();
