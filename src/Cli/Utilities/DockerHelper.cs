@@ -265,6 +265,10 @@ public sealed class DockerHelper : IDockerHelper
                                 }
                             }),
                         Mounts = mounts
+                    },
+                    Env = new []
+                    {
+                        "DOTNET_ENVIRONMENT=Development"
                     }
                 },
                 cancellationToken);
