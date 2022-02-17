@@ -18,11 +18,11 @@ public sealed class HomeAssistantClient : IHomeAssistantClient
 
     public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"{nameof(SendAsync)} started");
+        _logger.LogInformation($"{nameof(SendAsync)} started [{nameof(httpRequestMessage.RequestUri)}={httpRequestMessage.RequestUri}]");
 
         var httpResponseMessage = await _client.SendAsync(httpRequestMessage, cancellationToken);
 
-        _logger.LogInformation($"{nameof(SendAsync)} finished");
+        _logger.LogInformation($"{nameof(SendAsync)} finished [{nameof(httpResponseMessage.StatusCode)}={httpResponseMessage.StatusCode}]");
 
         return httpResponseMessage;
     }

@@ -75,12 +75,19 @@ public sealed class HomeApplianceHttpRequestMessageSenderHubClient : IHostedServ
 
     private async Task ReceiveHttpMessageAsync(SendHttpRequestRequest sendHttpRequestRequest)
     {
-        _logger.LogInformation($"{nameof(ReceiveHttpMessageAsync)} HTTP request received");
-        var (id, httpRequestMessage) = sendHttpRequestRequest;
-        var response = await _homeAssistantClient.SendAsync(httpRequestMessage, _cancellationTokenSource.Token);
-        _logger.LogInformation($"{nameof(ReceiveHttpMessageAsync)} HTTP Response received [{nameof(response.StatusCode)}={response.StatusCode}]");
+        try
+        {
+            _logger.LogInformation($"{nameof(ReceiveHttpMessageAsync)} started [{nameof(sendHttpRequestRequest.Id)}={sendHttpRequestRequest.Id}]");
+            var (id, httpRequestMessage) = sendHttpRequestRequest;
+            var response = await _homeAssistantClient.SendAsync(httpRequestMessage, _cancellationTokenSource.Token);
 
-        await _homeApplianceHttpResponseMessageReceiverClient.SendAsync(new ReceiveHttpResponseRequest(id, response), _cancellationTokenSource.Token);
-        _logger.LogInformation($"{nameof(ReceiveHttpMessageAsync)} HTTP response sent back to server");
+            await _homeApplianceHttpResponseMessageReceiverClient.SendAsync(new ReceiveHttpResponseRequest(id, response), _cancellationTokenSource.Token);
+            _logger.LogInformation($"{nameof(ReceiveHttpMessageAsync)} finished [{nameof(sendHttpRequestRequest.Id)}={sendHttpRequestRequest.Id}]");
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, null);
+            throw;
+        }
     }
 }

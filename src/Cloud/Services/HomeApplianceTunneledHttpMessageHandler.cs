@@ -40,7 +40,13 @@ public sealed class HomeApplianceTunneledHttpMessageHandler : IHomeApplianceTunn
         {
             await _homeApplianceHttpRequestMessageSenderHub.SendRequestAsync(new SendHttpRequestRequest(id, httpRequestMessage), cancellationToken);
 
-            return await taskCompletionSource.Task.WithTimeoutAsync(TimeSpan.FromMinutes(3));
+            var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            cancellationTokenSource.CancelAfter(TimeSpan.FromMinutes(3));
+
+            await using (cancellationTokenSource.Token.Register(() => taskCompletionSource.SetCanceled(cancellationTokenSource.Token)))
+            {
+                return await taskCompletionSource.Task;
+            }
         }
         finally
         {
@@ -54,11 +60,15 @@ public sealed class HomeApplianceTunneledHttpMessageHandler : IHomeApplianceTunn
     public void ReceiveHttpResponse(ReceiveHttpResponseRequest receiveHttpResponseRequest)
     {
         var (id, response) = receiveHttpResponseRequest;
+        _logger.LogInformation($"{nameof(ReceiveHttpResponse)} started [{nameof(id)}={id}]");
+
         if (!_idToTaskCompletionSourceMapping.TryGetValue(id, out var taskCompletionSource))
         {
             throw new KeyNotFoundException($"Could not locate request id [{nameof(id)}={id}]");
         }
 
         taskCompletionSource.SetResult(response);
+
+        _logger.LogInformation($"{nameof(ReceiveHttpResponse)} finished [{nameof(id)}={id}]");
     }
 }
