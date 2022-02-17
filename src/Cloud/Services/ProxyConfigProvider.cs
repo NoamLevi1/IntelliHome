@@ -31,7 +31,7 @@ namespace IntelliHome.Cloud
                         {
                             ["DefaultDestination"] = new()
                             {
-                                Address = "http://localhost:8123"
+                                Address = "http://host.docker.internal:8123"
                             }
                         }
                     }

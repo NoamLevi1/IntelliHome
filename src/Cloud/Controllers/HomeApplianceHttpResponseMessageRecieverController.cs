@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IntelliHome.Cloud;
 
-[Route("Api/HomeApplianceHttpResponseMessageReceiver")]
-public sealed class HomeApplianceHttpResponseMessageReceiverController : Controller
+[Route("api/[controller]")]
+[ApiController]
+public sealed class HomeApplianceHttpResponseMessageReceiverController : ControllerBase
 {
     private readonly IHomeApplianceTunneledHttpMessageHandler _homeApplianceTunneledHttpMessageHandler;
 
-    public HomeApplianceHttpResponseMessageReceiverController(IHomeApplianceTunneledHttpMessageHandler homeApplianceTunneledHttpMessageHandler) =>
+    public HomeApplianceHttpResponseMessageReceiverController(IHomeApplianceTunneledHttpMessageHandler homeApplianceTunneledHttpMessageHandler) => 
         _homeApplianceTunneledHttpMessageHandler = homeApplianceTunneledHttpMessageHandler;
 
-    [HttpPost("/")]
+    [HttpPost]
     public void ReceiveHttpResponse([FromBody] ReceiveHttpResponseRequest receiveHttpResponseRequest)
     {
         _homeApplianceTunneledHttpMessageHandler.ReceiveHttpResponse(receiveHttpResponseRequest);
