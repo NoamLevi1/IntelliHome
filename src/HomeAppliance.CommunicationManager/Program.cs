@@ -1,4 +1,6 @@
-﻿namespace IntelliHome.HomeAppliance.CommunicationManager;
+﻿using IntelliHome.Common;
+
+namespace IntelliHome.HomeAppliance.CommunicationManager;
 
 public static class Program
 {
@@ -13,6 +15,7 @@ public static class Program
             ConfigureServices(
                 services =>
                     services.
+                        AddConfigurationManager<CommunicationManagerConfiguration>().
                         AddSingleton<IHomeAssistantClient, HomeAssistantClient>().
                         AddSingleton<IHomeApplianceHttpResponseMessageReceiverClient, HomeApplianceHttpResponseMessageReceiverClient>().
                         AddHostedService<HomeApplianceHttpRequestMessageSenderHubClient>()).
