@@ -8,4 +8,7 @@ public static class TaskExtension
 
         return Task.WhenAll(tasks);
     }
+
+    public static TResult Await<TResult>(this Task<TResult> task) =>
+        task.GetAwaiter().GetResult();
 }

@@ -1,5 +1,6 @@
 using IntelliHome.Common;
 using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Forwarder;
 
 namespace IntelliHome.Cloud;
 
@@ -15,6 +16,7 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.
             AddSingleton<IClientStore,ClientStore>().
+            AddSingleton<IForwarderHttpClientFactory, ForwarderHomeApplianceTunneledHttpClientFactory>().
             AddSingleton<IHomeApplianceHttpRequestMessageSenderHub, HomeApplianceHttpRequestMessageSenderHub>().
             AddSingleton<IHomeApplianceTunneledHttpMessageHandler, HomeApplianceTunneledHttpMessageHandler>().
             AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>();
