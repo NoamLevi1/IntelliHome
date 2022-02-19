@@ -5,7 +5,7 @@ WORKDIR /app
 # Copy csproj and restore as distinct layers
 COPY ./HomeAppliance.CommunicationManager/HomeAppliance.CommunicationManager.csproj ./HomeAppliance.CommunicationManager/
 COPY ./Common/Common.csproj ./Common/
-RUN dotnet restore -r ./HomeAppliance.CommunicationManager/HomeAppliance.CommunicationManager.csproj 
+RUN dotnet restore ./HomeAppliance.CommunicationManager/HomeAppliance.CommunicationManager.csproj 
 
 # Copy everything else and build
 COPY ./Directory.Build.props ./
