@@ -16,8 +16,13 @@ public static class Program
                 services =>
                     services.
                         AddConfigurationManager<CommunicationManagerConfiguration>().
+                        AddSingleton<ICommunicationResponseSender, CommunicationResponseSender>().
+                        AddSingleton<ICommunicationHandler, CommunicationHandler>().
+                        AddSingleton<ICommunicationServer, CommunicationServer>().
+                        AddSingleton<IHttpResponseMessageDisassembler,HttpResponseMessageDisassembler>().
                         AddSingleton<IHomeAssistantClient, HomeAssistantClient>().
-                        AddSingleton<IHomeApplianceHttpResponseMessageReceiverClient, HomeApplianceHttpResponseMessageReceiverClient>().
-                        AddHostedService<HomeApplianceHttpRequestMessageSenderHubClient>()).
+                        AddSingleton<IRemoteStreamManager, RemoteStreamManager>().
+                        AddSingleton<IRemoteContentManager, RemoteContentManager>().
+                        AddHostedService<CommunicationRequestReceiver>()).
             Build();
 }

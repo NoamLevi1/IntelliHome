@@ -16,10 +16,11 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.
             AddConfigurationManager<CloudConfiguration>().
-            AddSingleton<IClientStore,ClientStore>().
+            AddSingleton<IClientStore, ClientStore>().
             AddSingleton<IForwarderHttpClientFactory, ForwarderHomeApplianceTunneledHttpClientFactory>().
-            AddSingleton<IHomeApplianceHttpRequestMessageSenderHub, HomeApplianceHttpRequestMessageSenderHub>().
-            AddSingleton<IHomeApplianceTunneledHttpMessageHandler, HomeApplianceTunneledHttpMessageHandler>().
+            AddSingleton<ICommunicationRequestSender, CommunicationRequestSender>().
+            AddSingleton<ICommunicationClient, CommunicationClient>().
+            AddSingleton<IHttpResponseMessageBuilder, HttpResponseMessageBuilder>().
             AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>();
 
         builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options => options.PayloadSerializerSettings.ConfigureCommon());
@@ -43,7 +44,7 @@ public static class Program
 
         webApplication.MapReverseProxy();
         webApplication.MapControllers();
-        webApplication.MapHub<HomeApplianceHttpRequestMessageSenderHub>("/Api/HomeApplianceHttpRequestMessageSender");
+        webApplication.MapHub<CommunicationRequestSender>("/Api/CommunicationRequestSender");
 
         return webApplication;
     }

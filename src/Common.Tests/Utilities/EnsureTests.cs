@@ -59,9 +59,20 @@ public sealed class EnsureTests
     }
 
     [TestMethod]
-    [DataRow(new object[] {1, 2, 3}, false)]
+    [DataRow(
+        new object[]
+        {
+            1,
+            2,
+            3
+        },
+        false)]
     [DataRow(null, true)]
-    [DataRow(new object[] { }, true)]
+    [DataRow(
+        new object[]
+        {
+        },
+        true)]
     public void TestEnsureNotNullOrEmptyDetectsNullOrEmpty(object[]? arr, bool isNullOrEmpty)
     {
         if (isNullOrEmpty)
@@ -78,7 +89,12 @@ public sealed class EnsureTests
     [TestMethod]
     public void TestEnsureNotNullOrEmptyReturnsRightValue()
     {
-        var arr = new[] {1, 2, 3};
+        var arr = new[]
+        {
+            1,
+            2,
+            3
+        };
         CollectionAssert.AreEqual(arr, Ensure.NotNullOrEmpty(arr).ToArray());
     }
 }

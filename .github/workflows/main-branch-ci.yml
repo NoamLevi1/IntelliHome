@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
-      
+
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -32,7 +32,7 @@ jobs:
 
       - name: Image digest
         run: echo ${{ steps.docker_build_cloud.outputs.digest }}
-      
+
       - name: Build and push homeappliance-communicationmanager
         id: docker_build_homeappliance_communicationmanager
         uses: docker/build-push-action@v2

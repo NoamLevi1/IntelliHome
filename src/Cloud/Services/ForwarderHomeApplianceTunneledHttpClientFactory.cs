@@ -1,26 +1,46 @@
-﻿using Yarp.ReverseProxy.Forwarder;
+﻿using Humanizer;
+using IntelliHome.Common;
+using Yarp.ReverseProxy.Forwarder;
 
 namespace IntelliHome.Cloud
 {
-    public sealed class ForwarderHomeApplianceTunneledHttpClientFactory : IForwarderHttpClientFactory
+    public sealed class ForwarderHomeApplianceTunneledHttpClientFactory : ForwarderHttpClientFactory
     {
-        private readonly IHomeApplianceTunneledHttpMessageHandler _homeApplianceTunneledHttpMessageHandler;
+        private readonly ICommunicationClient _communicationClient;
+        private readonly IHttpResponseMessageBuilder _httpResponseMessageBuilder;
 
-        public ForwarderHomeApplianceTunneledHttpClientFactory(IHomeApplianceTunneledHttpMessageHandler homeApplianceTunneledHttpMessageHandler) =>
-            _homeApplianceTunneledHttpMessageHandler = homeApplianceTunneledHttpMessageHandler;
+        public ForwarderHomeApplianceTunneledHttpClientFactory(ICommunicationClient communicationClient, IHttpResponseMessageBuilder httpResponseMessageBuilder)
+        {
+            _communicationClient = communicationClient;
+            _httpResponseMessageBuilder = httpResponseMessageBuilder;
+        }
 
-        public HttpMessageInvoker CreateClient(ForwarderHttpClientContext context) =>
-            new(new CustomHttpMessageHandler(_homeApplianceTunneledHttpMessageHandler));
+        protected override HttpMessageHandler WrapHandler(ForwarderHttpClientContext context, HttpMessageHandler handler)
+        {
+            handler.Dispose();
+            return new CustomHttpMessageHandler(_communicationClient, _httpResponseMessageBuilder);
+        }
 
         private sealed class CustomHttpMessageHandler : HttpMessageHandler
         {
-            private readonly IHomeApplianceTunneledHttpMessageHandler _homeApplianceTunneledHttpMessageHandler;
+            private readonly ICommunicationClient _communicationClient;
+            private readonly IHttpResponseMessageBuilder _httpResponseMessageBuilder;
 
-            public CustomHttpMessageHandler(IHomeApplianceTunneledHttpMessageHandler homeApplianceTunneledHomeApplianceTunneledHttpMessageHandler) =>
-                _homeApplianceTunneledHttpMessageHandler = homeApplianceTunneledHomeApplianceTunneledHttpMessageHandler;
+            public CustomHttpMessageHandler(
+                ICommunicationClient communicationClient,
+                IHttpResponseMessageBuilder httpResponseMessageBuilder)
+            {
+                _communicationClient = communicationClient;
+                _httpResponseMessageBuilder = httpResponseMessageBuilder;
+            }
 
-            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
-                _homeApplianceTunneledHttpMessageHandler.SendAsync(request, cancellationToken);
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
+                _httpResponseMessageBuilder.Build(
+                    (await _communicationClient.SendAsync<SendHomeAssistantHttpRequestRequest, SendHomeAssistantHttpRequestResponse>(
+                            new SendHomeAssistantHttpRequestRequest(await HttpRequestData.FromHttpRequestMessageAsync(request, cancellationToken)),
+                            cancellationToken).
+                        WaitAsync(3.Minutes(), cancellationToken)).
+                    HttpResponseData);
         }
     }
 }

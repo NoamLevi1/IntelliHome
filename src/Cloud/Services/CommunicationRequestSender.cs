@@ -3,20 +3,20 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace IntelliHome.Cloud;
 
-public interface IHomeApplianceHttpRequestMessageSenderHub
+public interface ICommunicationRequestSender
 {
-    Task SendRequestAsync(SendHttpRequestRequest sendHttpRequestRequest, CancellationToken cancellationToken);
+    Task SendRequestAsync(ICommunicationRequest communicationRequest, CancellationToken cancellationToken);
 }
 
-public sealed class HomeApplianceHttpRequestMessageSenderHub : Hub, IHomeApplianceHttpRequestMessageSenderHub
+public sealed class CommunicationRequestSender : Hub, ICommunicationRequestSender
 {
-    private readonly ILogger<HomeApplianceHttpRequestMessageSenderHub> _logger;
-    private readonly IHubContext<HomeApplianceHttpRequestMessageSenderHub> _hubContext;
+    private readonly ILogger<CommunicationRequestSender> _logger;
+    private readonly IHubContext<CommunicationRequestSender> _hubContext;
     private readonly IClientStore _clientStore;
 
-    public HomeApplianceHttpRequestMessageSenderHub(
-        ILogger<HomeApplianceHttpRequestMessageSenderHub> logger,
-        IHubContext<HomeApplianceHttpRequestMessageSenderHub> hubContext,
+    public CommunicationRequestSender(
+        ILogger<CommunicationRequestSender> logger,
+        IHubContext<CommunicationRequestSender> hubContext,
         IClientStore clientStore)
     {
         _logger = logger;
@@ -43,18 +43,18 @@ public sealed class HomeApplianceHttpRequestMessageSenderHub : Hub, IHomeApplian
         return Task.CompletedTask;
     }
 
-    public async Task SendRequestAsync(SendHttpRequestRequest sendHttpRequestRequest, CancellationToken cancellationToken)
+    public async Task SendRequestAsync(ICommunicationRequest communicationRequest, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"{nameof(SendRequestAsync)} started");
+        _logger.LogDebug($"{nameof(SendRequestAsync)} started [{nameof(communicationRequest.Id)}={communicationRequest.Id}]");
 
         await _hubContext.
             Clients.
             Client(_clientStore.Clients.Single()).
             SendAsync(
-                HomeApplianceHttpRequestMessageSenderHubClientMethodNames.ReceiveHttpRequest,
-                sendHttpRequestRequest,
+                SignalRMethods.ReceiveRequest,
+                communicationRequest,
                 cancellationToken);
 
-        _logger.LogInformation($"{nameof(SendRequestAsync)} finished");
+        _logger.LogDebug($"{nameof(SendRequestAsync)} finished");
     }
 }

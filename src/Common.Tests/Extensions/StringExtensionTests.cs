@@ -11,10 +11,10 @@ public sealed class StringExtensionTests
     [DataRow("", true)]
     [DataRow("  ", true)]
     [DataRow(" ", true)]
-    [DataRow("\t",true)]
-    [DataRow(" \t",true)]
-    [DataRow("\t ",true)]
-    [DataRow("\t\t",true)]
+    [DataRow("\t", true)]
+    [DataRow(" \t", true)]
+    [DataRow("\t ", true)]
+    [DataRow("\t\t", true)]
     public void TestIsNullOrWhiteSpace(string? value, bool expectedResult)
     {
         Assert.AreEqual(expectedResult, value.IsNullOrWhiteSpace());

@@ -6,7 +6,7 @@ namespace IntelliHome.HomeAppliance.CommunicationManager;
 public sealed class CommunicationManagerConfiguration : IServiceConfiguration
 {
     [UsedImplicitly]
-    public CommunicationManagerConfiguration(IConfigurationRoot configurationRoot)
+    public CommunicationManagerConfiguration(IConfiguration configuration)
     {
     }
 }

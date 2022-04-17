@@ -11,10 +11,10 @@ public static class TarHelper
         using var archive = TarArchive.CreateOutputTarArchive(tarStream);
         archive.IsStreamOwner = false;
 
-        foreach (var fileSystemEntry in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
+        foreach (var fileSystemEntry in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories).Where(path => !path.Contains("\\.vs\\")))
         {
             var entry = TarEntry.CreateEntryFromFile(fileSystemEntry);
-            entry.Name = entry.Name.Replace(directory.Replace("\\", "/"), string.Empty).TrimStart('/');
+            entry.Name = entry.Name.Replace(directory.TrimStart('/').Replace("\\", "/"), string.Empty).TrimStart('/');
             archive.WriteEntry(entry, false);
         }
         archive.Close();

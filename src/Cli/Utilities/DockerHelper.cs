@@ -135,7 +135,7 @@ public sealed class DockerHelper : IDockerHelper
                 new Mount
                 {
                     Type = "bind",
-                    Source = mountSource.ToLower(),
+                    Source = mountSource,
                     Target = "/config"
                 }
             });
@@ -266,7 +266,7 @@ public sealed class DockerHelper : IDockerHelper
                             }),
                         Mounts = mounts
                     },
-                    Env = new []
+                    Env = new[]
                     {
                         "DOTNET_ENVIRONMENT=Development"
                     }
