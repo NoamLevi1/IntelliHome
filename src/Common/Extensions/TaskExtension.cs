@@ -9,6 +9,15 @@ public static class TaskExtension
         return Task.WhenAll(tasks);
     }
 
+    public static void Await(this Task task) =>
+        task.GetAwaiter().GetResult();
+
     public static TResult Await<TResult>(this Task<TResult> task) =>
+        task.GetAwaiter().GetResult();
+
+    public static void Await(this ValueTask task) =>
+        task.GetAwaiter().GetResult();
+
+    public static TResult Await<TResult>(this ValueTask<TResult> task) =>
         task.GetAwaiter().GetResult();
 }

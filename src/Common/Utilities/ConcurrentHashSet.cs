@@ -6,10 +6,10 @@ namespace IntelliHome.Common;
 public sealed class ConcurrentHashSet<TItem> : IEnumerable<TItem>
     where TItem : notnull
 {
-    private readonly ConcurrentDictionary<TItem, EmptyStruct> _concurrentDictionary;
+    private readonly ConcurrentDictionary<TItem, VoidResult> _concurrentDictionary;
 
     public ConcurrentHashSet() =>
-        _concurrentDictionary = new ConcurrentDictionary<TItem, EmptyStruct>();
+        _concurrentDictionary = new ConcurrentDictionary<TItem, VoidResult>();
 
     public IEnumerator<TItem> GetEnumerator() =>
         _concurrentDictionary.Keys.GetEnumerator();
@@ -18,12 +18,8 @@ public sealed class ConcurrentHashSet<TItem> : IEnumerable<TItem>
         GetEnumerator();
 
     public bool Add(TItem item) =>
-        _concurrentDictionary.TryAdd(item, new EmptyStruct());
+        _concurrentDictionary.TryAdd(item, VoidResult.Instance);
 
     public bool Remove(TItem item) =>
         _concurrentDictionary.TryRemove(item, out _);
-
-    private struct EmptyStruct
-    {
-    }
 }

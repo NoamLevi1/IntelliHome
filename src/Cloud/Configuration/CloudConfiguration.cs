@@ -6,7 +6,7 @@ namespace IntelliHome.Cloud;
 public sealed class CloudConfiguration : IServiceConfiguration
 {
     [UsedImplicitly]
-    public CloudConfiguration(IConfigurationRoot configurationRoot)
+    public CloudConfiguration(IConfiguration configuration)
     {
     }
 }
