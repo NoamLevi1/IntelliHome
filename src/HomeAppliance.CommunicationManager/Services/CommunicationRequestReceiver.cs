@@ -49,7 +49,7 @@ public sealed class CommunicationRequestReceiver : IHostedService
 
         _connection.On<ICommunicationRequest>(
             SignalRMethods.ReceiveRequest,
-            ReceiveRequestAsync);
+            ReceiveRequest);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -74,12 +74,12 @@ public sealed class CommunicationRequestReceiver : IHostedService
             return Task.CompletedTask;
         };
 
-    private async Task ReceiveRequestAsync(ICommunicationRequest communicationRequest)
+    private void ReceiveRequest(ICommunicationRequest communicationRequest)
     {
-        _logger.LogDebug($"{nameof(ReceiveRequestAsync)} started [{nameof(communicationRequest.Id)}={communicationRequest.Id} Type={communicationRequest.GetType().Name}]");
+        _logger.LogDebug($"{nameof(ReceiveRequest)} started [{nameof(communicationRequest.Id)}={communicationRequest.Id} Type={communicationRequest.GetType().Name}]");
 
-        await _communicationServer.ServeRequestAsync(communicationRequest, _cancellationTokenSource.Token);
+        _communicationServer.ServeRequestAsync(communicationRequest, _cancellationTokenSource.Token);
 
-        _logger.LogDebug($"{nameof(ReceiveRequestAsync)} finished [{nameof(communicationRequest.Id)}={communicationRequest.Id}]");
+        _logger.LogDebug($"{nameof(ReceiveRequest)} finished [{nameof(communicationRequest.Id)}={communicationRequest.Id}]");
     }
 }
