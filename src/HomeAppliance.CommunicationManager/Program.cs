@@ -16,10 +16,11 @@ public static class Program
                 services =>
                     services.
                         AddConfigurationManager<CommunicationManagerConfiguration>().
+                        AddSingleton<ICloudUrlBuilder, CloudUrlBuilder>().
                         AddSingleton<ICommunicationResponseSender, CommunicationResponseSender>().
                         AddSingleton<ICommunicationHandler, CommunicationHandler>().
                         AddSingleton<ICommunicationServer, CommunicationServer>().
-                        AddSingleton<IHttpResponseMessageDisassembler,HttpResponseMessageDisassembler>().
+                        AddSingleton<IHttpResponseMessageDisassembler, HttpResponseMessageDisassembler>().
                         AddSingleton<IHomeAssistantClient, HomeAssistantClient>().
                         AddSingleton<IRemoteStreamManager, RemoteStreamManager>().
                         AddSingleton<IRemoteContentManager, RemoteContentManager>().

@@ -135,7 +135,10 @@ public sealed class DockerHelper : IDockerHelper
                 new Mount
                 {
                     Type = "bind",
-                    Source = mountSource,
+                    Source =
+                        OperatingSystem.IsWindows()
+                            ? mountSource.ToLower()
+                            : mountSource,
                     Target = "/config"
                 }
             });
