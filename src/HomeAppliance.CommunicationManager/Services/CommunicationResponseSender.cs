@@ -12,15 +12,20 @@ public interface ICommunicationResponseSender
 
 public sealed class CommunicationResponseSender : ICommunicationResponseSender
 {
+    private readonly Uri _communicationResponseReceiverUrl;
     private readonly HttpClient _httpClient;
     private readonly JsonSerializer _serializer;
 
     private readonly ILogger<CommunicationResponseSender> _logger;
 
-    public CommunicationResponseSender(ILogger<CommunicationResponseSender> logger, IHostEnvironment hostEnvironment)
+    public CommunicationResponseSender(
+        ILogger<CommunicationResponseSender> logger,
+        IHostEnvironment hostEnvironment,
+        ICloudUrlBuilder cloudUrlBuilder)
     {
         _logger = logger;
 
+        _communicationResponseReceiverUrl = cloudUrlBuilder.GetCommunicationResponseReceiverUri();
         _httpClient = hostEnvironment.IsDevelopment()
             ? new HttpClient(
                 new HttpClientHandler
@@ -36,7 +41,7 @@ public sealed class CommunicationResponseSender : ICommunicationResponseSender
         _logger.LogDebug($"{nameof(SendResponseAsync)} started [{nameof(communicationResponse.RequestId)}={communicationResponse.RequestId}]");
 
         (await _httpClient.PostAsync(
-                "https://host.docker.internal:7050/Api/CommunicationResponseReceiver",
+                _communicationResponseReceiverUrl,
                 new StringContent(
                     _serializer.SerializeToString(communicationResponse),
                     Encoding.UTF8,

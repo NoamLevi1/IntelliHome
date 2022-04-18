@@ -14,6 +14,7 @@ public sealed class CommunicationRequestReceiver : IHostedService
     public CommunicationRequestReceiver(
         ILogger<CommunicationRequestReceiver> logger,
         IHostEnvironment hostEnvironment,
+        ICloudUrlBuilder cloudUrlBuilder,
         ICommunicationServer communicationServer)
     {
         _logger = logger;
@@ -23,7 +24,7 @@ public sealed class CommunicationRequestReceiver : IHostedService
         _connection =
             new HubConnectionBuilder().
                 WithUrl(
-                    "https://host.docker.internal:7050/Api/CommunicationRequestSender",
+                    cloudUrlBuilder.GetCommunicationRequestSenderUri(),
                     connectionOptions =>
                         connectionOptions.HttpMessageHandlerFactory =
                             httpMessageHandler =>
