@@ -39,7 +39,7 @@ jobs:
         with:
           context: ./src
           platforms: linux/amd64,linux/arm64
-          file: ./src/HomeAppliance.CommunicationManager/Dockerfile.arm
+          file: ./src/HomeAppliance.CommunicationManager/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/homeappliance-communicationmanager:latest
 
