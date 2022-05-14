@@ -11,7 +11,7 @@ public sealed class HttpResponseMessageDisassembler : IHttpResponseMessageDisass
 {
     private readonly IRemoteContentManager _remoteContentManager;
 
-    public HttpResponseMessageDisassembler(IRemoteContentManager remoteContentManager) => 
+    public HttpResponseMessageDisassembler(IRemoteContentManager remoteContentManager) =>
         _remoteContentManager = remoteContentManager;
 
     public async Task<HttpResponseData> DisassembleAsync(HttpResponseMessage httpResponseMessage, CancellationToken cancellationToken) =>

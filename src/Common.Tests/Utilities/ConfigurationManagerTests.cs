@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace IntelliHome.Common.Tests;
 
@@ -13,8 +14,7 @@ public sealed class ConfigurationManagerTests
     {
         _testConfiguration = new TestConfiguration
         {
-            RightConfiguration = new TestRightConfiguration(),
-            WrongConfiguration = new TestWrongConfiguration()
+            RightConfiguration = new TestRightConfiguration()
         };
         _manager = new ConfigurationManager(_testConfiguration);
     }
@@ -33,17 +33,13 @@ public sealed class ConfigurationManagerTests
     private sealed class TestConfiguration : IServiceConfiguration
     {
         public TestRightConfiguration? RightConfiguration { get; init; }
-        public TestWrongConfiguration? WrongConfiguration { get; init; }
     }
 
     private sealed class TestRightConfiguration : IServiceConfiguration
     {
     }
 
-    private sealed class TestWrongConfiguration : IServiceConfiguration
-    {
-    }
-
+    [UsedImplicitly]
     private sealed class NonIncludedConfiguration : IServiceConfiguration
     {
     }

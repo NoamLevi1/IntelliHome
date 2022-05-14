@@ -15,21 +15,22 @@ namespace IntelliHome.Cloud.Tests;
 [TestClass]
 public sealed class CommunicationRequestSenderTests
 {
+    private const string _connectionId = nameof(_connectionId);
+    private readonly Guid _clientId = Guid.Empty;
+
+    private Mock<ILogger<CommunicationRequestSender>> _loggerMock = null!;
+    private Mock<IHubContext<CommunicationRequestSender>> _hubContextMock = null!;
+    private Mock<IHubClients> _hubClientsMock = null!;
+    private Mock<IClientProxy> _clientProxyMock = null!;
+    private Mock<IHomeApplianceStore> _clientStoreMock = null!;
+    private CommunicationRequestSender _communicationRequestSender = null!;
+
     [TestMethod]
     public async Task TestOnConnectedCallsLogger()
     {
-        var loggerMock = new Mock<ILogger<CommunicationRequestSender>>();
-        var hubContextMock = new Mock<IHubContext<CommunicationRequestSender>>();
-        var clientStoreMock = new Mock<IClientStore>();
+        await _communicationRequestSender.OnConnectedAsync();
 
-        var communicationRequestSender = new CommunicationRequestSender(loggerMock.Object, hubContextMock.Object, clientStoreMock.Object);
-        clientStoreMock.Setup(store => store.Clients).Returns(new ConcurrentHashSet<string>());
-
-        communicationRequestSender.Context = new MockHubCallerContext("");
-
-        await communicationRequestSender.OnConnectedAsync();
-
-        loggerMock.Verify(
+        _loggerMock.Verify(
             logger => logger.Log(
                 It.IsAny<LogLevel>(),
                 It.IsAny<EventId>(),
@@ -41,35 +42,17 @@ public sealed class CommunicationRequestSenderTests
     [TestMethod]
     public async Task TestOnConnectedCallsStore()
     {
-        var loggerMock = new Mock<ILogger<CommunicationRequestSender>>();
-        var hubContextMock = new Mock<IHubContext<CommunicationRequestSender>>();
-        var clientStoreMock = new Mock<IClientStore>();
+        await _communicationRequestSender.OnConnectedAsync();
 
-        var communicationRequestSender = new CommunicationRequestSender(loggerMock.Object, hubContextMock.Object, clientStoreMock.Object);
-        clientStoreMock.Setup(store => store.Clients).Returns(new ConcurrentHashSet<string>());
-
-        communicationRequestSender.Context = new MockHubCallerContext("");
-
-        await communicationRequestSender.OnConnectedAsync();
-
-        clientStoreMock.VerifyGet(store => store.Clients);
+        _clientStoreMock.Verify(store => store.AddOrUpdateHomeAppliance(_clientId,_connectionId));
     }
 
     [TestMethod]
     public async Task TestOnDisconnectedCallsLogger()
     {
-        var loggerMock = new Mock<ILogger<CommunicationRequestSender>>();
-        var hubContextMock = new Mock<IHubContext<CommunicationRequestSender>>();
-        var clientStoreMock = new Mock<IClientStore>();
+        await _communicationRequestSender.OnDisconnectedAsync(null);
 
-        var communicationRequestSender = new CommunicationRequestSender(loggerMock.Object, hubContextMock.Object, clientStoreMock.Object);
-        clientStoreMock.Setup(store => store.Clients).Returns(new ConcurrentHashSet<string>());
-
-        communicationRequestSender.Context = new MockHubCallerContext("");
-
-        await communicationRequestSender.OnDisconnectedAsync(null);
-
-        loggerMock.Verify(
+        _loggerMock.Verify(
             logger => logger.Log(
                 It.IsAny<LogLevel>(),
                 It.IsAny<EventId>(),
@@ -79,45 +62,16 @@ public sealed class CommunicationRequestSenderTests
     }
 
     [TestMethod]
-    public async Task TestOnDisconnectedCallsStore()
-    {
-        var loggerMock = new Mock<ILogger<CommunicationRequestSender>>();
-        var hubContextMock = new Mock<IHubContext<CommunicationRequestSender>>();
-        var clientStoreMock = new Mock<IClientStore>();
-
-        var communicationRequestSender = new CommunicationRequestSender(loggerMock.Object, hubContextMock.Object, clientStoreMock.Object);
-        clientStoreMock.Setup(store => store.Clients).Returns(new ConcurrentHashSet<string>());
-
-        communicationRequestSender.Context = new MockHubCallerContext("");
-
-        await communicationRequestSender.OnDisconnectedAsync(null);
-
-        clientStoreMock.VerifyGet(store => store.Clients);
-    }
-
-    [TestMethod]
     public async Task TestSendAsyncCallsContext()
     {
-        var loggerMock = new Mock<ILogger<CommunicationRequestSender>>();
-        var hubContextMock = new Mock<IHubContext<CommunicationRequestSender>>();
-        var hubClientsMock = new Mock<IHubClients>();
-        var clientProxyMock = new Mock<IClientProxy>();
-        var clientStoreMock = new Mock<IClientStore>();
-
-        var communicationRequestSender = new CommunicationRequestSender(loggerMock.Object, hubContextMock.Object, clientStoreMock.Object);
-        clientStoreMock.Setup(store => store.Clients).Returns(new ConcurrentHashSet<string> {"Client"});
-
-        hubContextMock.SetupGet(context => context.Clients).Returns(hubClientsMock.Object);
-        hubClientsMock.Setup(clients => clients.Client("Client")).Returns(clientProxyMock.Object);
-
         var communicationRequest = new MockRequest();
-        await communicationRequestSender.SendRequestAsync(communicationRequest, CancellationToken.None);
+        await _communicationRequestSender.SendRequestAsync(_clientId, communicationRequest, CancellationToken.None);
 
-        clientStoreMock.VerifyAll();
-        hubContextMock.VerifyAll();
-        hubClientsMock.VerifyAll();
+        _clientStoreMock.VerifyAll();
+        _hubContextMock.VerifyAll();
+        _hubClientsMock.VerifyAll();
 
-        clientProxyMock.Verify(
+        _clientProxyMock.Verify(
             proxy => proxy.SendCoreAsync(
                 SignalRMethods.ReceiveRequest,
                 new object?[]
@@ -127,17 +81,31 @@ public sealed class CommunicationRequestSenderTests
                 CancellationToken.None));
     }
 
+    [TestInitialize]
+    public void Initialize()
+    {
+        _loggerMock = new Mock<ILogger<CommunicationRequestSender>>();
+        _hubContextMock = new Mock<IHubContext<CommunicationRequestSender>>();
+        _hubClientsMock = new Mock<IHubClients>();
+        _clientProxyMock = new Mock<IClientProxy>();
+        _clientStoreMock = new Mock<IHomeApplianceStore>();
+
+        _communicationRequestSender = new CommunicationRequestSender(_loggerMock.Object, _hubContextMock.Object, _clientStoreMock.Object);
+        _communicationRequestSender.Context = new MockHubCallerContext();
+
+        _hubContextMock.SetupGet(context => context.Clients).Returns(_hubClientsMock.Object);
+        _hubClientsMock.Setup(clients => clients.Client(_connectionId)).Returns(_clientProxyMock.Object);
+        _clientStoreMock.Setup(store => store.GetConnectionId(_clientId)).Returns(_connectionId);
+    }
+
     private sealed class MockHubCallerContext : HubCallerContext
     {
-        public override string ConnectionId { get; }
+        public override string ConnectionId => _connectionId;
         public override string? UserIdentifier => null;
         public override ClaimsPrincipal? User => null;
         public override IDictionary<object, object?> Items => new Dictionary<object, object?>();
         public override IFeatureCollection Features => new Mock<IFeatureCollection>().Object;
         public override CancellationToken ConnectionAborted => CancellationToken.None;
-
-        public MockHubCallerContext(string connectionId) =>
-            ConnectionId = connectionId;
 
         public override void Abort()
         {

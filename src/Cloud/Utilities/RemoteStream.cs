@@ -38,13 +38,13 @@ public sealed class RemoteStream : Stream
     public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) =>
         await WriteAsync(new ReadOnlyMemory<byte>(buffer, offset, count), cancellationToken);
 
-    public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default) => 
+    public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default) =>
         await _communicationClient.SendAsync(new RemoteStreamWriteRequest(_id, buffer), cancellationToken);
 
     public override int Read(byte[] buffer, int offset, int count) =>
         ReadAsync(new Memory<byte>(buffer, offset, count)).Await();
 
-    public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => 
+    public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) =>
         await ReadAsync(new Memory<byte>(buffer, offset, count), cancellationToken);
 
     public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)

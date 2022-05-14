@@ -3,11 +3,11 @@ using JetBrains.Annotations;
 
 namespace IntelliHome.HomeAppliance.CommunicationManager;
 
-public sealed class CommunicationManagerConfiguration : IServiceConfiguration
+public sealed class CommunicationManagerConfiguration : CommonConfiguration
 {
-    public ServerConfiguration ServerConfiguration { get; }
-
     [UsedImplicitly]
-    public CommunicationManagerConfiguration(IConfiguration configuration) =>
-        ServerConfiguration = new ServerConfiguration(configuration.GetSection(nameof(ServerConfiguration)));
+    public CommunicationManagerConfiguration(IConfiguration configuration)
+        : base(configuration)
+    {
+    }
 }

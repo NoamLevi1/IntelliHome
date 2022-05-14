@@ -16,11 +16,10 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.
             AddConfigurationManager<CloudConfiguration>().
-            AddSingleton<IClientStore, ClientStore>().
+            AddSingleton<IHomeApplianceStore, HomeApplianceStore>().
             AddSingleton<IForwarderHttpClientFactory, ForwarderHomeApplianceTunneledHttpClientFactory>().
             AddSingleton<ICommunicationRequestSender, CommunicationRequestSender>().
-            AddSingleton<ICommunicationClient, CommunicationClient>().
-            AddSingleton<IHttpResponseMessageBuilder, HttpResponseMessageBuilder>().
+            AddSingleton<ICommunicationManager, CommunicationManager>().
             AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>();
 
         builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options => options.PayloadSerializerSettings.ConfigureCommon());

@@ -3,32 +3,35 @@ using IntelliHome.Common;
 
 namespace IntelliHome.Cloud;
 
-public interface ICommunicationClient
+public interface ICommunicationManager
 {
-    Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken)
+    Task<TResponse> SendAsync<TRequest, TResponse>(
+        Guid homeApplianceId,
+        TRequest request,
+        CancellationToken cancellationToken)
         where TResponse : ICommunicationResponse
         where TRequest : IRequestWithResponse<TResponse>;
 
     void SetResponse(ICommunicationResponse communicationResponse);
-
-    async Task SendAsync(IVoidRequest request, CancellationToken cancellationToken) =>
-        await SendAsync<IVoidRequest, VoidResponse>(request, cancellationToken);
 }
 
-public sealed class CommunicationClient : ICommunicationClient
+public sealed class CommunicationManager : ICommunicationManager
 {
-    private readonly ILogger<CommunicationClient> _logger;
+    private readonly ILogger<CommunicationManager> _logger;
     private readonly ICommunicationRequestSender _communicationRequestSender;
     private readonly ConcurrentDictionary<Guid, TaskCompletionSource<ICommunicationResponse>> _idToTaskCompletionSourceMapping;
 
-    public CommunicationClient(ILogger<CommunicationClient> logger, ICommunicationRequestSender communicationRequestSender)
+    public CommunicationManager(ILogger<CommunicationManager> logger, ICommunicationRequestSender communicationRequestSender)
     {
         _logger = logger;
         _communicationRequestSender = communicationRequestSender;
         _idToTaskCompletionSourceMapping = new ConcurrentDictionary<Guid, TaskCompletionSource<ICommunicationResponse>>();
     }
 
-    public async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken)
+    public async Task<TResponse> SendAsync<TRequest, TResponse>(
+        Guid homeApplianceId,
+        TRequest request,
+        CancellationToken cancellationToken)
         where TRequest : IRequestWithResponse<TResponse>
         where TResponse : ICommunicationResponse
     {
@@ -44,7 +47,7 @@ public sealed class CommunicationClient : ICommunicationClient
 
         try
         {
-            await _communicationRequestSender.SendRequestAsync(request, cancellationToken);
+            await _communicationRequestSender.SendRequestAsync(homeApplianceId, request, cancellationToken);
             await using (cancellationToken.Register(() => taskCompletionSource.SetCanceled(cancellationToken)))
             {
                 communicationResponse = await taskCompletionSource.Task;
