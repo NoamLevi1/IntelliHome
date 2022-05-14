@@ -26,7 +26,7 @@ public sealed class CommunicationServer : ICommunicationServer
     public async Task ServeRequestAsync(ICommunicationRequest communicationRequest, CancellationToken cancellationToken)
     {
         _logger.LogDebug($"{nameof(ServeRequestAsync)} started [{nameof(communicationRequest)}={communicationRequest}]");
-        
+
         ICommunicationResponse? response = null;
         try
         {

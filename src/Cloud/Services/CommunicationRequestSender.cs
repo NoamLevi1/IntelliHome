@@ -5,29 +5,32 @@ namespace IntelliHome.Cloud;
 
 public interface ICommunicationRequestSender
 {
-    Task SendRequestAsync(ICommunicationRequest communicationRequest, CancellationToken cancellationToken);
+    Task SendRequestAsync(
+        Guid homeApplianceId,
+        ICommunicationRequest communicationRequest,
+        CancellationToken cancellationToken);
 }
 
 public sealed class CommunicationRequestSender : Hub, ICommunicationRequestSender
 {
     private readonly ILogger<CommunicationRequestSender> _logger;
     private readonly IHubContext<CommunicationRequestSender> _hubContext;
-    private readonly IClientStore _clientStore;
+    private readonly IHomeApplianceStore _homeApplianceStore;
 
     public CommunicationRequestSender(
         ILogger<CommunicationRequestSender> logger,
         IHubContext<CommunicationRequestSender> hubContext,
-        IClientStore clientStore)
+        IHomeApplianceStore homeApplianceStore)
     {
         _logger = logger;
         _hubContext = hubContext;
-        _clientStore = clientStore;
+        _homeApplianceStore = homeApplianceStore;
     }
 
     public override Task OnConnectedAsync()
     {
         _logger.LogInformation($"{nameof(OnConnectedAsync)} Connection established [{nameof(Context.ConnectionId)}={Context.ConnectionId}]");
-        _clientStore.Clients.Add(Context.ConnectionId);
+        _homeApplianceStore.AddOrUpdateHomeAppliance(Guid.Empty, Context.ConnectionId);
 
         return Task.CompletedTask;
     }
@@ -38,18 +41,20 @@ public sealed class CommunicationRequestSender : Hub, ICommunicationRequestSende
             $"{nameof(OnConnectedAsync)} Connection terminated " +
             $"[{nameof(Context.ConnectionId)}={Context.ConnectionId} " +
             $"{nameof(exception)}={exception}]");
-        _clientStore.Clients.Remove(Context.ConnectionId);
 
         return Task.CompletedTask;
     }
 
-    public async Task SendRequestAsync(ICommunicationRequest communicationRequest, CancellationToken cancellationToken)
+    public async Task SendRequestAsync(
+        Guid homeApplianceId,
+        ICommunicationRequest communicationRequest,
+        CancellationToken cancellationToken)
     {
         _logger.LogDebug($"{nameof(SendRequestAsync)} started [{nameof(communicationRequest.Id)}={communicationRequest.Id}]");
 
         await _hubContext.
             Clients.
-            Client(_clientStore.Clients.Single()).
+            Client(_homeApplianceStore.GetConnectionId(homeApplianceId)).
             SendAsync(
                 SignalRMethods.ReceiveRequest,
                 communicationRequest,

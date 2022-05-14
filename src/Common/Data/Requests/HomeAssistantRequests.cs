@@ -4,7 +4,7 @@ public sealed class SendHomeAssistantHttpRequestRequest : CommunicationRequest, 
 {
     public HttpRequestData HttpRequestData { get; }
 
-    public SendHomeAssistantHttpRequestRequest(HttpRequestData httpRequestData) => 
+    public SendHomeAssistantHttpRequestRequest(HttpRequestData httpRequestData) =>
         HttpRequestData = httpRequestData;
 }
 

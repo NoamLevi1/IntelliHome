@@ -10,10 +10,10 @@ public interface ICloudUrlBuilder
 
 public sealed class CloudUrlBuilder : ICloudUrlBuilder
 {
-    private readonly ServerConfiguration _configuration;
+    private readonly WebApplicationConfiguration _configuration;
 
     public CloudUrlBuilder(IConfigurationManager configurationManager) =>
-        _configuration = configurationManager.Get<ServerConfiguration>();
+        _configuration = configurationManager.Get<WebApplicationConfiguration>();
 
     public Uri GetCommunicationResponseReceiverUri() =>
         new UriBuilder(_configuration.ServerUrl)

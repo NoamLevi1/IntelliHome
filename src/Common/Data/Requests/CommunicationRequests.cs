@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace IntelliHome.Common;
 
@@ -12,7 +13,7 @@ public interface ICommunicationResponse
     public Guid RequestId { get; set; }
 }
 
-public interface IRequestWithResponse<TResponse> : ICommunicationRequest
+public interface IRequestWithResponse<[UsedImplicitly] TResponse> : ICommunicationRequest
     where TResponse : ICommunicationResponse
 {
 }

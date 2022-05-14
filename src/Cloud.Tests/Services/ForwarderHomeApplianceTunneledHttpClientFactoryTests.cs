@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,38 +17,46 @@ public class ForwarderHomeApplianceTunneledHttpClientFactoryTests
     [TestMethod]
     public async Task TestReturnsRightResponse()
     {
-        var communicationClientMock = new Mock<ICommunicationClient>();
-        var messageBuilderMock = new Mock<IHttpResponseMessageBuilder>();
-        var forwarderHomeApplianceTunneledHttpClientFactory = new ForwarderHomeApplianceTunneledHttpClientFactory(communicationClientMock.Object, messageBuilderMock.Object);
+        var communicationManagerMock = new Mock<ICommunicationManager>();
+        var forwarderHomeApplianceTunneledHttpClientFactory = new ForwarderHomeApplianceTunneledHttpClientFactory(communicationManagerMock.Object);
 
         var request = new HttpRequestMessage();
         var response = new HttpResponseMessage();
 
-        communicationClientMock.
+        communicationManagerMock.
             Setup(
                 client =>
                     client.SendAsync<SendHomeAssistantHttpRequestRequest, SendHomeAssistantHttpRequestResponse>(
+                        It.IsAny<Guid>(),
                         It.IsAny<SendHomeAssistantHttpRequestRequest>(),
                         CancellationToken.None)).
-            ReturnsAsync(new SendHomeAssistantHttpRequestResponse(new HttpResponseData
-            {
-                ContentId = Guid.Empty,
-                ContentHeaders = response.Content.Headers,
-                Headers = response.Headers,
-                ReasonPhrase = response.ReasonPhrase,
-                RequestData = response.RequestMessage is null
-                    ? null
-                    : await HttpRequestData.FromHttpRequestMessageAsync(response.RequestMessage, CancellationToken.None),
-                Version = response.Version,
-                StatusCode = response.StatusCode
-            }));
-        messageBuilderMock.Setup(builder => builder.Build(It.IsAny<HttpResponseData>())).Returns(response);
+            ReturnsAsync(
+                new SendHomeAssistantHttpRequestResponse(
+                    new HttpResponseData
+                    {
+                        ContentId = Guid.Empty,
+                        ContentHeaders = response.Content.Headers,
+                        Headers = response.Headers,
+                        ReasonPhrase = response.ReasonPhrase,
+                        RequestData = response.RequestMessage is null
+                            ? null
+                            : await HttpRequestData.FromHttpRequestMessageAsync(response.RequestMessage, CancellationToken.None),
+                        Version = response.Version,
+                        StatusCode = response.StatusCode
+                    }));
 
-        var result = await forwarderHomeApplianceTunneledHttpClientFactory.CreateClient(new ForwarderHttpClientContext{ NewConfig = new HttpClientConfig()}).SendAsync(request, CancellationToken.None);
+        await forwarderHomeApplianceTunneledHttpClientFactory.
+            CreateClient(
+                new ForwarderHttpClientContext
+                {
+                    NewConfig = new HttpClientConfig(),
+                    NewMetadata = new Dictionary<string, string>
+                    {
+                        [ForwarderMetadataKey.HomeApplianceId] = Guid.Empty.ToString()
+                    }
+                }).
+            SendAsync(request, CancellationToken.None);
 
-        communicationClientMock.VerifyAll();
-        messageBuilderMock.VerifyAll();
-
-        Assert.AreSame(response, result);
+        communicationManagerMock.VerifyAll();
     }
 }

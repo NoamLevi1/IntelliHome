@@ -9,7 +9,7 @@ public class CommunicationResponseReceiverTests
     [TestMethod]
     public void TestClientIsCalledOnReceive()
     {
-        var communicationClientMock = new Mock<ICommunicationClient>();
+        var communicationClientMock = new Mock<ICommunicationManager>();
         var communicationResponseReceiver = new CommunicationResponseReceiver(communicationClientMock.Object);
 
         var response = new MockResponse();

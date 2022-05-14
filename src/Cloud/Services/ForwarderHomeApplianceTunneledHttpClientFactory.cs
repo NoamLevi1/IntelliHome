@@ -6,32 +6,31 @@ namespace IntelliHome.Cloud
 {
     public sealed class ForwarderHomeApplianceTunneledHttpClientFactory : ForwarderHttpClientFactory
     {
-        private readonly ICommunicationClient _communicationClient;
-        private readonly IHttpResponseMessageBuilder _httpResponseMessageBuilder;
+        private readonly ICommunicationManager _communicationManager;
 
-        public ForwarderHomeApplianceTunneledHttpClientFactory(ICommunicationClient communicationClient, IHttpResponseMessageBuilder httpResponseMessageBuilder)
-        {
-            _communicationClient = communicationClient;
-            _httpResponseMessageBuilder = httpResponseMessageBuilder;
-        }
+        public ForwarderHomeApplianceTunneledHttpClientFactory(ICommunicationManager communicationManager) =>
+            _communicationManager = communicationManager;
 
         protected override HttpMessageHandler WrapHandler(ForwarderHttpClientContext context, HttpMessageHandler handler)
         {
+            Ensure.NotNull(context.NewMetadata);
+
             handler.Dispose();
-            return new CustomHttpMessageHandler(_communicationClient, _httpResponseMessageBuilder);
+            return new CustomHttpMessageHandler(
+                new CommunicationClient(
+                    Guid.Parse(context.NewMetadata[ForwarderMetadataKey.HomeApplianceId]),
+                    _communicationManager));
         }
 
         private sealed class CustomHttpMessageHandler : HttpMessageHandler
         {
             private readonly ICommunicationClient _communicationClient;
-            private readonly IHttpResponseMessageBuilder _httpResponseMessageBuilder;
+            private readonly HttpResponseMessageBuilder _httpResponseMessageBuilder;
 
-            public CustomHttpMessageHandler(
-                ICommunicationClient communicationClient,
-                IHttpResponseMessageBuilder httpResponseMessageBuilder)
+            public CustomHttpMessageHandler(ICommunicationClient communicationClient)
             {
                 _communicationClient = communicationClient;
-                _httpResponseMessageBuilder = httpResponseMessageBuilder;
+                _httpResponseMessageBuilder = new HttpResponseMessageBuilder(_communicationClient);
             }
 
             protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>

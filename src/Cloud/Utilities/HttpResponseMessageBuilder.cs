@@ -2,12 +2,7 @@
 
 namespace IntelliHome.Cloud;
 
-public interface IHttpResponseMessageBuilder
-{
-    HttpResponseMessage Build(HttpResponseData httpResponseData);
-}
-
-public sealed class HttpResponseMessageBuilder : IHttpResponseMessageBuilder
+public sealed class HttpResponseMessageBuilder
 {
     private readonly ICommunicationClient _communicationClient;
 

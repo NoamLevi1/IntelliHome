@@ -12,7 +12,7 @@ public sealed class HomeAssistantClient : IHomeAssistantClient
 {
     private readonly ILogger<HomeAssistantClient> _logger;
     private readonly IHttpResponseMessageDisassembler _httpResponseMessageDisassembler;
-    
+
     private readonly HttpMessageInvoker _httpMessageInvoker;
 
     public HomeAssistantClient(ILogger<HomeAssistantClient> logger, IHttpResponseMessageDisassembler httpResponseMessageDisassembler)

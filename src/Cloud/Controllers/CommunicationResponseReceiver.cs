@@ -7,14 +7,14 @@ namespace IntelliHome.Cloud;
 [ApiController]
 public sealed class CommunicationResponseReceiver : ControllerBase
 {
-    private readonly ICommunicationClient _communicationClient;
+    private readonly ICommunicationManager _communicationManager;
 
-    public CommunicationResponseReceiver(ICommunicationClient communicationClient) =>
-        _communicationClient = communicationClient;
+    public CommunicationResponseReceiver(ICommunicationManager communicationManager) =>
+        _communicationManager = communicationManager;
 
     [HttpPost]
     public void ReceiveResponse([FromBody] ICommunicationResponse communicationResponse)
     {
-        _communicationClient.SetResponse(communicationResponse);
+        _communicationManager.SetResponse(communicationResponse);
     }
 }
