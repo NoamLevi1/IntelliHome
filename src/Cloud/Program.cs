@@ -1,3 +1,4 @@
+using IntelliHome.Cloud.Extensions;
 using IntelliHome.Common;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Forwarder;
@@ -41,6 +42,10 @@ public static class Program
             UseRouting().
             UseAuthorization();
 
+        webApplication.MapControllerRouteWithHostNamePrefix(
+            "default",
+            "{controller=Home}/{action=Index}/{id?}",
+            "Portal");
         webApplication.MapReverseProxy();
         webApplication.MapControllers();
         webApplication.MapHub<CommunicationRequestSender>("/Api/CommunicationRequestSender");

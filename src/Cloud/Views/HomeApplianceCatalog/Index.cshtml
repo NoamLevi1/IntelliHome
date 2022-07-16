@@ -1,0 +1,69 @@
+﻿@model IEnumerable<HomeApplianceCatalogModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Home Appliance Catalog</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Number)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsConnected)
+        </th>
+        <th>
+            Select Device
+        </th>
+        <th>
+            Edit Device
+        </th>
+    </tr>
+    @foreach (var model in Model ?? Array.Empty<HomeApplianceCatalogModel>())
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(_ => model.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(_ => model.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(_ => model.IsConnected)
+            </td>
+            <td>
+                @if (model.IsConnected)
+                {
+                    <a href=@(model.Link)
+                       class="button"
+                       type="submit" />
+                    <button type="button"
+                            class="btn btn-success">
+                        Select
+                    </button>
+                }
+                else
+                {
+                    <button disabled
+                            type="button"
+                            class="btn btn-secondary">
+                        select
+                    </button>
+                }
+            </td>
+            <td>
+                <button type="button"
+                        class="btn btn-primary">
+                    Edit
+                </button>
+            </td>
+        </tr>
+    }
+</table>
