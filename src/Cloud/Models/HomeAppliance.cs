@@ -6,6 +6,9 @@ public sealed class HomeAppliance
     public string? Name { get; set; }
     public bool IsConnected { get; set; }
 
-    public HomeAppliance(Guid id) => 
-        Id = id;
+    public HomeAppliance(Guid id) =>Id = id;
+
+    public HomeAppliance()
+    {
+    }
 }

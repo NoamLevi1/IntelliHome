@@ -12,12 +12,14 @@ public sealed class HomeApplianceCatalogModel
     [DisplayName("Is Connected")]
     public bool IsConnected { get; }
     public Uri Link { get; }
+    public Guid ID { get; }
 
     public HomeApplianceCatalogModel(
         int number,
         string name,
         bool isConnected,
-        Uri link)
+        Uri link,
+        Guid id)
     {
         Ensure.NotNullOrWhiteSpace(name);
         Ensure.NotNull(link);
@@ -26,5 +28,6 @@ public sealed class HomeApplianceCatalogModel
         Name = name;
         IsConnected = isConnected;
         Link = link;
+        ID = id;
     }
 }

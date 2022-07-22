@@ -23,7 +23,7 @@
             Select Device
         </th>
         <th>
-            Edit Device
+            EditHomeAppliance Device
         </th>
     </tr>
     @foreach (var model in Model ?? Array.Empty<HomeApplianceCatalogModel>())
@@ -61,7 +61,11 @@
             <td>
                 <button type="button"
                         class="btn btn-primary">
-                    Edit
+                    @Html.ActionLink(
+                        linkText:"Edit",
+                        actionName:"EditHomeAppliance",
+                        routeValues:new {id=model.ID},
+                        htmlAttributes: new {@class="btn btn-primary"})
                 </button>
             </td>
         </tr>

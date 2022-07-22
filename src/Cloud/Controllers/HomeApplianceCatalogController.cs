@@ -5,7 +5,7 @@ namespace IntelliHome.Cloud.Controllers
 {
     public sealed class HomeApplianceCatalogController : Controller
     {
-        static readonly IReadOnlyCollection<HomeAppliance> _devicesList =
+        static ICollection<HomeAppliance> devicesList =
             new[]
             {
                 new HomeAppliance(Guid.NewGuid()) {Name = "Living Room", IsConnected = true},
@@ -22,7 +22,7 @@ namespace IntelliHome.Cloud.Controllers
 
         public IActionResult Index() =>
             View(
-                _devicesList.
+                devicesList.
                     OrderByDescending(_ => _.IsConnected).
                     Select(
                         (device, number) =>
@@ -38,7 +38,30 @@ namespace IntelliHome.Cloud.Controllers
                                 number + 1,
                                 device.Name ?? "Unconfigured",
                                 device.IsConnected,
-                                uri);
+                                uri,device.Id);
                         }));
+
+        public IActionResult EditHomeAppliance(Guid id)
+        {
+            //get the HomeAppliance specified by the ID
+
+            // testing
+            HomeAppliance editingHomeAppliance = devicesList.Where(s => s.Id == id).FirstOrDefault();
+
+            return View(editingHomeAppliance);
+
+        }
+
+        [HttpPost]
+        public ActionResult EditHomeAppliance([Bind(include:"ID,Name,IsConnected")] HomeAppliance homeAppliance)
+        {
+            Ensure.NotNull(devicesList);
+            //update HomeAppliance In the DB
+
+            HomeAppliance oldHomeAppliance = devicesList?.Where(s => s.Id == homeAppliance.Id).FirstOrDefault() ?? new HomeAppliance(Guid.NewGuid());
+            devicesList.Remove(oldHomeAppliance);
+            devicesList.Add(homeAppliance);
+            return RedirectToAction("Index");
+        }
     }
 }
