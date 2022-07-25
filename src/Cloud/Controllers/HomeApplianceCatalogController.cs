@@ -5,8 +5,8 @@ namespace IntelliHome.Cloud.Controllers
 {
     public sealed class HomeApplianceCatalogController : Controller
     {
-        static ICollection<HomeAppliance> devicesList =
-            new[]
+        static readonly IList<HomeAppliance> devicesList =
+            new List<HomeAppliance>()
             {
                 new HomeAppliance(Guid.NewGuid()) {Name = "Living Room", IsConnected = true},
                 new HomeAppliance(Guid.NewGuid()) {Name = "Dining Room", IsConnected = false},
@@ -37,8 +37,9 @@ namespace IntelliHome.Cloud.Controllers
                             return new HomeApplianceCatalogModel(
                                 number + 1,
                                 device.Name ?? "Unconfigured",
-                                device.IsConnected,
-                                uri,device.Id);
+                                device.IsConnected ?? false,
+                                uri,
+                                device.Id);
                         }));
 
         public IActionResult EditHomeAppliance(Guid id)
@@ -46,21 +47,46 @@ namespace IntelliHome.Cloud.Controllers
             //get the HomeAppliance specified by the ID
 
             // testing
-            HomeAppliance editingHomeAppliance = devicesList.Where(s => s.Id == id).FirstOrDefault();
+            var editingHomeAppliance = devicesList.FirstOrDefault(s => s.Id == id);
 
-            return View(editingHomeAppliance);
-
+            if (editingHomeAppliance == null)
+            {
+                return NotFound();
+            }
+            
+            var edithomeApplianceModel = new EditHomeApplianceModel()
+            {
+                Id = editingHomeAppliance.Id,
+                Name = editingHomeAppliance.Name
+            };
+            return View(edithomeApplianceModel);
         }
 
         [HttpPost]
-        public ActionResult EditHomeAppliance([Bind(include:"ID,Name,IsConnected")] HomeAppliance homeAppliance)
+        public ActionResult EditHomeAppliance([FromForm] EditHomeApplianceModel homeAppliance)
         {
             Ensure.NotNull(devicesList);
             //update HomeAppliance In the DB
 
-            HomeAppliance oldHomeAppliance = devicesList?.Where(s => s.Id == homeAppliance.Id).FirstOrDefault() ?? new HomeAppliance(Guid.NewGuid());
-            devicesList.Remove(oldHomeAppliance);
-            devicesList.Add(homeAppliance);
+            var appliance = new HomeAppliance(homeAppliance.Id)
+            {
+                Name = homeAppliance.Name
+            };
+
+            var editingHomeAppliance = devicesList.FirstOrDefault(s => s.Id == appliance.Id);
+            if (editingHomeAppliance == null)
+            {
+                return NotFound();
+            }
+            editingHomeAppliance.Aggregate(appliance);
+
+
+
+
+
+            //HomeAppliance oldHomeAppliance = devicesList?.Where(s => s.Id == homeAppliance.Id).FirstOrDefault() ?? new HomeAppliance(Guid.NewGuid());
+            devicesList.Remove(editingHomeAppliance);
+            devicesList.Add(editingHomeAppliance);
             return RedirectToAction("Index");
         }
     }
