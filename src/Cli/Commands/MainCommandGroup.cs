@@ -1,14 +1,19 @@
-﻿using McMaster.Extensions.CommandLineUtils;
+﻿using IntelliHome.Common;
+using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
 namespace IntelliHome.Cli;
 
 [Command]
-[Subcommand(typeof(EnvironmentCommandGroup))]
+[Subcommand(typeof(EnvironmentCommandGroup),typeof(HomeApplianceCommandGroup))]
 public sealed class MainCommandGroup : CommandGroup
 {
-    public MainCommandGroup(ILoggerFactory loggerFactory, CommandLineApplication commandLineApplication)
+    [Option]
+    public EnvironmentType EnvironmentType { get; set; }
+
+    public MainCommandGroup(IConfigurationManager configurationManager,ILoggerFactory loggerFactory, CommandLineApplication commandLineApplication)
         : base(loggerFactory, commandLineApplication)
     {
+        ((CliConfigurationManager) configurationManager).EnvironmentType = EnvironmentType;
     }
 }

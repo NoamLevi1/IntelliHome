@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using IntelliHome.Cli.Configuration;
+using IntelliHome.Common;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace IntelliHome.Cli;
@@ -16,7 +18,9 @@ public static class Program
                     (_, services) =>
                     {
                         services.
+                            AddSingleton<IConfigurationManager,CliConfigurationManager>().
                             AddSingleton<HttpClient>().
+                            AddSingleton<IDatabase, Database>().
                             AddSingleton<IDockerHelper, DockerHelper>();
                         serviceProvider = services.BuildServiceProvider();
                     }).

@@ -1,14 +1,15 @@
 ﻿using IntelliHome.Common;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
 
-namespace IntelliHome.Cloud;
+namespace IntelliHome.Cli.Configuration;
 
-public sealed class CloudConfiguration : CommonConfiguration
+public sealed class CliConfiguration : IServiceConfiguration
 {
     public DatabaseConfiguration DatabaseConfiguration { get; }
 
     [UsedImplicitly]
-    public CloudConfiguration(IConfiguration configuration)
-        : base(configuration) =>
+    public CliConfiguration(IConfiguration configuration) =>
         DatabaseConfiguration = new DatabaseConfiguration(configuration.GetSection(nameof(DatabaseConfiguration)));
+
 }
