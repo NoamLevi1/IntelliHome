@@ -26,7 +26,7 @@
             Edit Device
         </th>
     </tr>
-    @foreach (var model in Model ?? Array.Empty<HomeApplianceCatalogModel>())
+    @foreach (var model in Model)
     {
         <tr>
             <td>
@@ -43,11 +43,12 @@
                 {
                     <a href=@(model.Link)
                        class="button"
-                       type="submit" />
-                    <button type="button"
-                            class="btn btn-success">
-                        Select
-                    </button>
+                       type="submit">
+                        <button type="button"
+                                class="btn btn-success">
+                            Select
+                        </button>
+                    </a>
                 }
                 else
                 {
