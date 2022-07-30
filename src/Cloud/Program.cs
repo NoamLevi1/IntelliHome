@@ -17,7 +17,7 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.
             AddConfigurationManager<CloudConfiguration>().
-            AddSingleton<IHomeApplianceStore, HomeApplianceStore>().
+            AddSingleton<IDatabase,Database>().
             AddSingleton<IForwarderHttpClientFactory, ForwarderHomeApplianceTunneledHttpClientFactory>().
             AddSingleton<ICommunicationRequestSender, CommunicationRequestSender>().
             AddSingleton<ICommunicationManager, CommunicationManager>().

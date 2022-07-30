@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MongoDB.Driver;
+using MongoDB.Driver.Core.Operations;
 using Moq;
 
 namespace IntelliHome.Cloud.Tests;
@@ -22,7 +24,8 @@ public sealed class CommunicationRequestSenderTests
     private Mock<IHubContext<CommunicationRequestSender>> _hubContextMock = null!;
     private Mock<IHubClients> _hubClientsMock = null!;
     private Mock<IClientProxy> _clientProxyMock = null!;
-    private Mock<IHomeApplianceStore> _clientStoreMock = null!;
+    private Mock<IDatabase> _databaseMock = null!;
+    private Mock<IMongoCollection<HomeAppliance>> _homeAppliancesCollectionMock = null!;
     private CommunicationRequestSender _communicationRequestSender = null!;
 
     [TestMethod]
@@ -40,11 +43,17 @@ public sealed class CommunicationRequestSenderTests
     }
 
     [TestMethod]
-    public async Task TestOnConnectedCallsStore()
+    public async Task TestOnConnectedCallsDatabase()
     {
         await _communicationRequestSender.OnConnectedAsync();
 
-        _clientStoreMock.Verify(store => store.AddOrUpdateHomeAppliance(_clientId,_connectionId));
+        _databaseMock.VerifyGet(database => database.HomeAppliances);
+        _homeAppliancesCollectionMock.Verify(
+            collection => collection.UpdateOneAsync(
+                It.IsAny<FilterDefinition<HomeAppliance>>(),
+                It.IsAny<UpdateDefinition<HomeAppliance>>(),
+                It.IsAny<UpdateOptions>(),
+                It.IsAny<CancellationToken>()));
     }
 
     [TestMethod]
@@ -65,9 +74,25 @@ public sealed class CommunicationRequestSenderTests
     public async Task TestSendAsyncCallsContext()
     {
         var communicationRequest = new MockRequest();
+        _homeAppliancesCollectionMock.
+            Setup(
+                collection => collection.FindAsync(
+                    It.IsAny<FilterDefinition<HomeAppliance>>(),
+                    It.IsAny<FindOptions<HomeAppliance, HomeAppliance>>(),
+                    It.IsAny<CancellationToken>())).
+            ReturnsAsync(
+                new MockCursor(
+                    new[]
+                    {
+                        new HomeAppliance(_clientId)
+                        {
+                            ConnectionId = _connectionId
+                        }
+                    }));
+
         await _communicationRequestSender.SendRequestAsync(_clientId, communicationRequest, CancellationToken.None);
 
-        _clientStoreMock.VerifyAll();
+        _databaseMock.VerifyAll();
         _hubContextMock.VerifyAll();
         _hubClientsMock.VerifyAll();
 
@@ -88,14 +113,18 @@ public sealed class CommunicationRequestSenderTests
         _hubContextMock = new Mock<IHubContext<CommunicationRequestSender>>();
         _hubClientsMock = new Mock<IHubClients>();
         _clientProxyMock = new Mock<IClientProxy>();
-        _clientStoreMock = new Mock<IHomeApplianceStore>();
+        _databaseMock = new Mock<IDatabase>();
+        _homeAppliancesCollectionMock = new Mock<IMongoCollection<HomeAppliance>>();
 
-        _communicationRequestSender = new CommunicationRequestSender(_loggerMock.Object, _hubContextMock.Object, _clientStoreMock.Object);
+        _communicationRequestSender = new CommunicationRequestSender(
+            _loggerMock.Object,
+            _databaseMock.Object,
+            _hubContextMock.Object);
         _communicationRequestSender.Context = new MockHubCallerContext();
 
         _hubContextMock.SetupGet(context => context.Clients).Returns(_hubClientsMock.Object);
         _hubClientsMock.Setup(clients => clients.Client(_connectionId)).Returns(_clientProxyMock.Object);
-        _clientStoreMock.Setup(store => store.GetConnectionId(_clientId)).Returns(_connectionId);
+        _databaseMock.SetupGet(store => store.HomeAppliances).Returns(_homeAppliancesCollectionMock.Object);
     }
 
     private sealed class MockHubCallerContext : HubCallerContext
@@ -110,5 +139,28 @@ public sealed class CommunicationRequestSenderTests
         public override void Abort()
         {
         }
+    }
+
+    private sealed class MockCursor : IAsyncCursor<HomeAppliance>
+    {
+        private readonly IEnumerator<IEnumerable<HomeAppliance>> _enumerator;
+
+        public IEnumerable<HomeAppliance> Current => _enumerator.Current;
+
+        public MockCursor(IEnumerable<HomeAppliance> homeAppliances) =>
+            _enumerator =
+                new List<IEnumerable<HomeAppliance>>
+                {
+                    homeAppliances
+                }.GetEnumerator();
+
+        public void Dispose()
+        {
+            _enumerator.Dispose();
+        }
+
+        public bool MoveNext(CancellationToken cancellationToken = new CancellationToken()) => _enumerator.MoveNext();
+
+        public Task<bool> MoveNextAsync(CancellationToken cancellationToken = new CancellationToken()) => Task.FromResult(_enumerator.MoveNext());
     }
 }
