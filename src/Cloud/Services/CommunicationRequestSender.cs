@@ -18,7 +18,19 @@ public sealed class CommunicationRequestSender : Hub, ICommunicationRequestSende
     private readonly IDatabase _database;
     private readonly IHubContext<CommunicationRequestSender> _hubContext;
 
-    private Guid HomeApplianceId => Guid.Empty;
+    private Guid HomeApplianceId
+    {
+        get
+        {
+            var httpContext = Context.GetHttpContext();
+            if (httpContext is null)
+            {
+                throw new Exception("Failed to resolve HttpContext");
+            }
+
+            return Guid.Parse(httpContext.Request.Host.Host.Split(".")[0]);
+        }
+    }
 
     public CommunicationRequestSender(
         ILogger<CommunicationRequestSender> logger,
@@ -68,7 +80,7 @@ public sealed class CommunicationRequestSender : Hub, ICommunicationRequestSende
                 SingleAsync(cancellationToken)).
             ConnectionId;
 
-        if (connectionId == null)
+        if (connectionId is null)
         {
             throw new Exception($"Cannot send request to a disconnected home appliance [{nameof(homeApplianceId)}={homeApplianceId}]");
         }

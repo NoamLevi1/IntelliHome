@@ -13,9 +13,10 @@ public static class Program
         Host.
             CreateDefaultBuilder(args).
             ConfigureServices(
-                services =>
+                (hostBuilderContext, services) =>
                     services.
                         AddConfigurationManager<CommunicationManagerConfiguration>().
+                        AddEnvironmentDependentSingleton<IIdGenerator, IdGenerator, DevelopmentIdGenerator>(hostBuilderContext.HostingEnvironment).
                         AddSingleton<ICloudUrlBuilder, CloudUrlBuilder>().
                         AddSingleton<ICommunicationResponseSender, CommunicationResponseSender>().
                         AddSingleton<ICommunicationHandler, CommunicationHandler>().

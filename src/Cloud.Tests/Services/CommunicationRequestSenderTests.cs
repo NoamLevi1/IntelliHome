@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Operations;
 using Moq;
 
 namespace IntelliHome.Cloud.Tests;
