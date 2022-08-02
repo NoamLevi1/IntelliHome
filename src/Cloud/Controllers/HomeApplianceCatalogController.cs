@@ -36,7 +36,37 @@ namespace IntelliHome.Cloud.Controllers
                             number + 1,
                             device.Name ?? "Unconfigured",
                             device.IsConnected,
-                            uri);
+                            uri,
+                            device.Id);
                     }));
+
+        public async Task<IActionResult> EditHomeAppliance(Guid id)
+        {
+            var homeAppliance = await (await _database.HomeAppliances.FindAsync(homeAppliance => homeAppliance.Id == id)).SingleOrDefaultAsync();
+
+            if (homeAppliance == null)
+            {
+                return NotFound();
+            }
+
+            var editHomeApplianceModel = new EditHomeApplianceModel
+            {
+                Id = homeAppliance.Id,
+                Name = homeAppliance.Name
+            };
+            return View(editHomeApplianceModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditHomeAppliance([FromForm] EditHomeApplianceModel editHomeApplianceModel)
+        {
+            await _database.
+                HomeAppliances.
+                UpdateOneAsync(
+                    homeAppliance => homeAppliance.Id == editHomeApplianceModel.Id,
+                    new UpdateDefinitionBuilder<HomeAppliance>().Set(homeAppliance => homeAppliance.Name, editHomeApplianceModel.Name));
+
+            return RedirectToAction("Index");
+        }
     }
 }
