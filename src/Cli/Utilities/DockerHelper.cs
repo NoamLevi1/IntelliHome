@@ -1,6 +1,7 @@
 ﻿using Docker.DotNet;
 using Docker.DotNet.Models;
 using IntelliHome.Common;
+using IntelliHome.HomeAppliance.CommunicationManager.Data;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -54,10 +55,26 @@ public sealed class DockerHelper : IDockerHelper
         CancellationToken cancellationToken)
     {
         await BuildImageAsync();
+
+        var persistentDataPath = Path.Combine(Path.GetTempPath(), "IntelliHome-CommunicationManager");
+        var mountSource = CreateMountSource(persistentDataPath, overwrite);
+
         await CreateContainerAsync(
             _communicationManagerContainerInformation,
             overwrite,
-            cancellationToken);
+            cancellationToken,
+            mounts: new[]
+            {
+                new Mount
+                {
+                    Type = "bind",
+                    Source =
+                        OperatingSystem.IsWindows()
+                            ? mountSource.ToLower()
+                            : mountSource,
+                    Target = $"/app/{ApplicationInformation.PersistantDataDirectoryName}"
+                }
+            });
 
         async Task BuildImageAsync()
         {
@@ -106,21 +123,7 @@ public sealed class DockerHelper : IDockerHelper
         await PullImageAsync();
 
         var configurationDirectoryPath = Path.Combine(Path.GetTempPath(), "HomeAssistantConfig");
-        if (overwrite && Directory.Exists(configurationDirectoryPath))
-        {
-            Directory.Delete(configurationDirectoryPath, true);
-        }
-
-        if (!Directory.Exists(configurationDirectoryPath))
-        {
-            Directory.CreateDirectory(configurationDirectoryPath);
-        }
-
-        var mountSource = configurationDirectoryPath.Replace("\\", "/").Replace(":", string.Empty);
-        if (!mountSource.StartsWith("/"))
-        {
-            mountSource = "/" + mountSource;
-        }
+        var mountSource = CreateMountSource(configurationDirectoryPath, overwrite);
 
         await CreateContainerAsync(
             _homeAssistantContainerInformation,
@@ -223,6 +226,27 @@ public sealed class DockerHelper : IDockerHelper
         _logger.LogInformation($"{nameof(RemoveHomeAssistantContainerAsync)} finished");
     }
 
+    private static string CreateMountSource(string sourcePath, bool overwrite)
+    {
+        if (overwrite && Directory.Exists(sourcePath))
+        {
+            Directory.Delete(sourcePath, true);
+        }
+
+        if (!Directory.Exists(sourcePath))
+        {
+            Directory.CreateDirectory(sourcePath);
+        }
+
+        var mountSource = sourcePath.Replace("\\", "/").Replace(":", string.Empty);
+        if (!mountSource.StartsWith("/"))
+        {
+            mountSource = "/" + mountSource;
+        }
+
+        return mountSource;
+    }
+
     private async Task CreateContainerAsync(
         ContainerInformation containerInformation,
         bool overwrite,
@@ -267,7 +291,11 @@ public sealed class DockerHelper : IDockerHelper
                                     HostPort = keyValuePair.Value.ToString()
                                 }
                             }),
-                        Mounts = mounts
+                        Mounts = mounts,
+                        ExtraHosts = new[]
+                        {
+                            $"{Guid.Empty}.host.docker.internal:host-gateway"
+                        }
                     },
                     Env = new[]
                     {

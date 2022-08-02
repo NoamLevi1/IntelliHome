@@ -8,8 +8,7 @@ public interface ICommunicationClient
         where TResponse : ICommunicationResponse
         where TRequest : IRequestWithResponse<TResponse>;
 
-    async Task SendAsync(IVoidRequest request, CancellationToken cancellationToken) =>
-        await SendAsync<IVoidRequest, VoidResponse>(request, cancellationToken);
+    Task SendAsync(IVoidRequest request, CancellationToken cancellationToken);
 }
 
 public sealed class CommunicationClient : ICommunicationClient
@@ -22,6 +21,9 @@ public sealed class CommunicationClient : ICommunicationClient
         _homeApplianceId = homeApplianceId;
         _communicationManager = communicationManager;
     }
+
+    public async Task SendAsync(IVoidRequest request, CancellationToken cancellationToken) =>
+        await SendAsync<IVoidRequest, VoidResponse>(request, cancellationToken);
 
     public Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken)
         where TRequest : IRequestWithResponse<TResponse>

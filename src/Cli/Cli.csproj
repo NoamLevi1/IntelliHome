@@ -19,5 +19,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Common\Common.csproj" />
+        <ProjectReference Include="..\HomeAppliance.CommunicationManager\HomeAppliance.CommunicationManager.csproj" />
     </ItemGroup>
 </Project>

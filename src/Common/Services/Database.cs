@@ -30,6 +30,6 @@ public sealed class DatabaseConfiguration : IServiceConfiguration
 {
     public string ConnectionString { get; }
 
-    public DatabaseConfiguration(IConfiguration configuration) => 
+    public DatabaseConfiguration(IConfiguration configuration) =>
         ConnectionString = configuration.GetValue<string>(nameof(ConnectionString));
 }
