@@ -42,7 +42,6 @@
                 @if (model.IsConnected)
                 {
                     <a href=@(model.Link)
-                       class="button"
                        type="submit">
                         <button type="button"
                                 class="btn btn-success">
@@ -60,10 +59,12 @@
                 }
             </td>
             <td>
-                <button type="button"
-                        class="btn btn-primary">
-                    Edit
-                </button>
+
+                @Html.ActionLink(
+                    linkText: "Edit",
+                    actionName: "EditHomeAppliance",
+                    routeValues: new {id = model.Id},
+                    htmlAttributes: new {@class = "btn btn-primary"})
             </td>
         </tr>
     }
