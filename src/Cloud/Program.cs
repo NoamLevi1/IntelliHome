@@ -1,4 +1,5 @@
 using IntelliHome.Cloud.Extensions;
+using IntelliHome.Cloud.Identity;
 using IntelliHome.Common;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Forwarder;
@@ -15,13 +16,21 @@ public static class Program
     private static WebApplication CreateWebApplication(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var cloudConfiguration = new CloudConfiguration(builder.Configuration);
+
         builder.Services.
-            AddConfigurationManager<CloudConfiguration>().
-            AddSingleton<IDatabase,Database>().
+            AddConfigurationManager(cloudConfiguration).
+            AddSingleton<IDatabase, Database>().
             AddSingleton<IForwarderHttpClientFactory, ForwarderHomeApplianceTunneledHttpClientFactory>().
             AddSingleton<ICommunicationRequestSender, CommunicationRequestSender>().
             AddSingleton<ICommunicationManager, CommunicationManager>().
             AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>();
+
+        builder.Services.
+            AddIdentity<ApplicationUser, ApplicationRole>().
+            AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>(
+                cloudConfiguration.DatabaseConfiguration.ConnectionString,
+                Database.DatabaseName);
 
         builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options => options.PayloadSerializerSettings.ConfigureCommon());
         builder.Services.AddControllersWithViews().AddNewtonsoftJson(options => options.SerializerSettings.ConfigureCommon());
@@ -40,6 +49,7 @@ public static class Program
             UseHttpsRedirection().
             UseStaticFiles().
             UseRouting().
+            UseAuthentication().
             UseAuthorization();
 
         webApplication.MapControllerRouteWithHostNamePrefix(

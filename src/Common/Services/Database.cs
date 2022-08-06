@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 namespace IntelliHome.Common;
@@ -10,17 +13,18 @@ public interface IDatabase
 
 public sealed class Database : IDatabase
 {
-    private const string _databaseName = nameof(IntelliHome);
+    public const string DatabaseName = nameof(IntelliHome);
 
     public IMongoCollection<HomeAppliance> HomeAppliances { get; }
 
     public Database(IConfigurationManager configurationManager)
     {
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
         var configuration = configurationManager.Get<DatabaseConfiguration>();
 
         var mongoClient = new MongoClient(configuration.ConnectionString);
 
-        var mongoDatabase = mongoClient.GetDatabase(_databaseName);
+        var mongoDatabase = mongoClient.GetDatabase(DatabaseName);
 
         HomeAppliances = mongoDatabase.GetCollection<HomeAppliance>(nameof(HomeAppliances));
     }

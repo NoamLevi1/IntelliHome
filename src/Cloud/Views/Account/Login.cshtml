@@ -1,0 +1,29 @@
+@model IntelliHome.Cloud.Identity.AccountLoginModel
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Login</h2>
+<div asp-validation-summary="All"
+     class="text-danger">
+</div>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email"
+               class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password"
+               class="form-control"
+               type="password" />
+    </div>
+    <button class="btn btn-primary"
+            type="submit">
+        Log In
+    </button>
+</form>

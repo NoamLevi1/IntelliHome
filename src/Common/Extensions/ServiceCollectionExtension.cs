@@ -9,4 +9,9 @@ public static class ServiceCollectionExtension
         services.
             AddSingleton<IServiceConfiguration, TConfiguration>().
             AddSingleton<IConfigurationManager, ConfigurationManager>();
+
+    public static IServiceCollection AddConfigurationManager(this IServiceCollection services, IServiceConfiguration configuration) =>
+        services.
+            AddSingleton(configuration).
+            AddSingleton<IConfigurationManager, ConfigurationManager>();
 }
