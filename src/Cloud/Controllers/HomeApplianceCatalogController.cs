@@ -1,9 +1,11 @@
 ﻿using IntelliHome.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
 namespace IntelliHome.Cloud.Controllers
 {
+    [Authorize]
     public sealed class HomeApplianceCatalogController : Controller
     {
         private readonly IDatabase _database;
