@@ -24,7 +24,9 @@ public static class Program
             AddSingleton<IForwarderHttpClientFactory, ForwarderHomeApplianceTunneledHttpClientFactory>().
             AddSingleton<ICommunicationRequestSender, CommunicationRequestSender>().
             AddSingleton<ICommunicationManager, CommunicationManager>().
-            AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>();
+            AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>().
+            AddHomeApplianceOwnerAuthorizationRequirement().
+            ConfigureCrossSubDomainsApplicationCookie(cloudConfiguration.WebApplicationConfiguration.ServerUrl.Host);
 
         builder.Services.
             AddIdentity<ApplicationUser, ApplicationRole>().
@@ -56,7 +58,7 @@ public static class Program
             "default",
             "{controller=Home}/{action=Index}/{id?}",
             "Portal");
-        webApplication.MapReverseProxy();
+        webApplication.MapReverseProxy().RequireAuthorization(nameof(HomeApplianceOwnerAuthorizationRequirement));
         webApplication.MapControllers();
         webApplication.MapHub<CommunicationRequestSender>("/Api/CommunicationRequestSender");
 
