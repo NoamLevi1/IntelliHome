@@ -1,5 +1,7 @@
-﻿using IntelliHome.Common;
+﻿using IntelliHome.Cloud.Identity;
+using IntelliHome.Common;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -9,19 +11,26 @@ namespace IntelliHome.Cloud.Controllers
     public sealed class HomeApplianceCatalogController : Controller
     {
         private readonly IDatabase _database;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly WebApplicationConfiguration _webApplicationConfiguration;
 
-        public HomeApplianceCatalogController(IConfigurationManager configurationManager, IDatabase database)
+        public HomeApplianceCatalogController(
+            IConfigurationManager configurationManager,
+            UserManager<ApplicationUser> userManager,
+            IDatabase database)
         {
             _database = database;
+            _userManager = userManager;
             _webApplicationConfiguration = configurationManager.Get<WebApplicationConfiguration>();
         }
 
-        public async Task<IActionResult> Index() =>
-            View(
+        public async Task<IActionResult> Index()
+        {
+            var userId = (await _userManager.GetUserAsync(User))?.Id;
+            return View(
                 (await (await _database.
                         HomeAppliances.
-                        FindAsync(_ => true)).
+                        FindAsync(homeAppliance => homeAppliance.OwnerId == userId)).
                     ToListAsync()).
                 OrderByDescending(_ => _.IsConnected).
                 Select(
@@ -41,13 +50,14 @@ namespace IntelliHome.Cloud.Controllers
                             device.IsConnected,
                             uri);
                     }));
+        }
 
         public async Task<IActionResult> EditHomeAppliance(Guid id)
         {
-            var homeAppliance = 
+            var homeAppliance =
                 await (await _database.
-                    HomeAppliances.
-                    FindAsync(homeAppliance => homeAppliance.Id == id)).
+                        HomeAppliances.
+                        FindAsync(homeAppliance => homeAppliance.Id == id)).
                     SingleOrDefaultAsync();
 
             if (homeAppliance is null)
