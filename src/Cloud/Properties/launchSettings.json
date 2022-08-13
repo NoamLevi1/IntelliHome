@@ -11,7 +11,7 @@
     "Cloud": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "https://portal.localhost:7050",
+      "launchUrl": "https://portal.intellihome.local:7050",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
