@@ -84,5 +84,36 @@ namespace IntelliHome.Cloud.Controllers
 
             return RedirectToAction("Index");
         }
+
+
+        public IActionResult AddHomeAppliance() => View();
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddHomeAppliance(AddHomeApplianceModel addHomeApplianceModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(addHomeApplianceModel);
+            }
+
+            var userId = (await _userManager.GetUserAsync(User))?.Id;
+            var updateResult = await _database.
+                HomeAppliances.
+                UpdateOneAsync(
+                    homeAppliance =>
+                        homeAppliance.Id == addHomeApplianceModel.Id &&
+                        homeAppliance.OwnerId == null,
+                    new UpdateDefinitionBuilder<HomeAppliance>().Set(homeAppliance => homeAppliance.OwnerId, userId));
+
+
+            if (updateResult.MatchedCount == 0)
+            {
+                ModelState.AddModelError("UnsupportedHomeAppliance", "Home appliance is either already assigned or does not exist");
+                return View(addHomeApplianceModel);
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

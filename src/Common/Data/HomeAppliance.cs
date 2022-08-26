@@ -8,7 +8,7 @@ public sealed class HomeAppliance
     public Guid Id { get; }
 
     public string? Name { get; set; }
-    public Guid OwnerId { get; set; }
+    public Guid? OwnerId { get; set; }
     public string? ConnectionId { get; set; }
 
     public bool IsConnected => ConnectionId != null;

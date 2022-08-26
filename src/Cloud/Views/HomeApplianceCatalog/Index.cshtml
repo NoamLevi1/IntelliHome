@@ -8,64 +8,71 @@
 
 <h2>Home Appliance Catalog</h2>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Number)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsConnected)
-        </th>
-        <th>
-            Select Device
-        </th>
-        <th>
-            Edit Device
-        </th>
-    </tr>
-    @foreach (var model in Model)
-    {
+<div>
+    <table class="table">
         <tr>
-            <td>
-                @Html.DisplayFor(_ => model.Number)
-            </td>
-            <td>
-                @Html.DisplayFor(_ => model.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(_ => model.IsConnected)
-            </td>
-            <td>
-                @if (model.IsConnected)
-                {
-                    <a href=@(model.Link)
-                       type="submit">
-                        <button type="button"
-                                class="btn btn-success">
-                            Select
-                        </button>
-                    </a>
-                }
-                else
-                {
-                    <button disabled
-                            type="button"
-                            class="btn btn-secondary">
-                        select
-                    </button>
-                }
-            </td>
-            <td>
-
-                @Html.ActionLink(
-                    linkText: "Edit",
-                    actionName: "EditHomeAppliance",
-                    routeValues: new {id = model.Id},
-                    htmlAttributes: new {@class = "btn btn-primary"})
-            </td>
+            <th>
+                @Html.DisplayNameFor(model => model.Number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsConnected)
+            </th>
+            <th>
+                Select Device
+            </th>
+            <th>
+                Edit Device
+            </th>
         </tr>
-    }
-</table>
+        @foreach (var model in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(_ => model.Number)
+                </td>
+                <td>
+                    @Html.DisplayFor(_ => model.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(_ => model.IsConnected)
+                </td>
+                <td>
+                    @if (model.IsConnected)
+                    {
+                        <a href=@(model.Link)
+                           type="submit">
+                            <button type="button"
+                                    class="btn btn-success">
+                                Select
+                            </button>
+                        </a>
+                    }
+                    else
+                    {
+                        <button disabled
+                                type="button"
+                                class="btn btn-secondary">
+                            select
+                        </button>
+                    }
+                </td>
+                <td>
+
+                    @Html.ActionLink(
+                        linkText: "Edit",
+                        actionName: "EditHomeAppliance",
+                        routeValues: new {id = model.Id},
+                        htmlAttributes: new {@class = "btn btn-primary"})
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.ActionLink(
+        linkText: "Add",
+        actionName: "AddHomeAppliance",
+        routeValues: null,
+        htmlAttributes: new {@class = "btn btn-primary"})
+</div>
