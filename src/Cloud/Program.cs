@@ -1,6 +1,8 @@
+using Humanizer;
 using IntelliHome.Cloud.Extensions;
 using IntelliHome.Cloud.Identity;
 using IntelliHome.Common;
+using Microsoft.AspNetCore.Identity;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Forwarder;
 
@@ -20,19 +22,22 @@ public static class Program
 
         builder.Services.
             AddConfigurationManager(cloudConfiguration).
+            AddEnvironmentDependentSingleton<IEmailSender, EmailSender, DevelopmentEmailSender>(builder.Environment).
             AddSingleton<IDatabase, Database>().
             AddSingleton<IForwarderHttpClientFactory, ForwarderHomeApplianceTunneledHttpClientFactory>().
             AddSingleton<ICommunicationRequestSender, CommunicationRequestSender>().
             AddSingleton<ICommunicationManager, CommunicationManager>().
             AddSingleton<IProxyConfigProvider, CustomProxyConfigProvider>().
             AddHomeApplianceOwnerAuthorizationRequirement().
-            ConfigureCrossSubDomainsApplicationCookie(cloudConfiguration.WebApplicationConfiguration.ServerUrl.Host);
+            ConfigureCrossSubDomainsApplicationCookie(cloudConfiguration.WebApplicationConfiguration.ServerUrl.Host).
+            Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = 2.Hours());
 
         builder.Services.
             AddIdentity<ApplicationUser, ApplicationRole>().
             AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>(
                 cloudConfiguration.DatabaseConfiguration.ConnectionString,
-                Database.DatabaseName);
+                Database.DatabaseName).
+            AddDefaultTokenProviders();
 
         builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options => options.PayloadSerializerSettings.ConfigureCommon());
         builder.Services.AddControllersWithViews().AddNewtonsoftJson(options => options.SerializerSettings.ConfigureCommon());

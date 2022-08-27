@@ -42,7 +42,7 @@ public sealed class HomeApplianceOwnerAuthorizationRequirement : AuthorizationHa
                 {
                     entry.SlidingExpiration = 1.Hours();
                     return (await (await requirement.
-                            _database!.
+                            _database.
                             HomeAppliances.
                             FindAsync(homeAppliance => homeAppliance.Id == homeApplianceId)).
                         SingleOrDefaultAsync())?.OwnerId;
